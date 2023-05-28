@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "92507212222",
+    "project_id": "capital-17afa",
+    "storage_bucket": "capital-17afa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:92507212222:android:a60a01f24bd46061fb51ef",
+        "android_client_info": {
+          "package_name": "com.example.capital_especulativo_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "92507212222-06u97of0vjfeaf722b20428p9g3a85gt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBgBthYWecs5bySSWRnG6hjxXIse6FCyWE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "92507212222-06u97of0vjfeaf722b20428p9g3a85gt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
