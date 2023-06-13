@@ -2,6 +2,7 @@
 
 import 'package:capital_especulativo_app/builder/dialog_ok.dart';
 import 'package:capital_especulativo_app/controller/login_controller.dart';
+import 'package:capital_especulativo_app/controller/wallet_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../builder/campo_texto.dart';
@@ -159,6 +160,7 @@ class _CadastroViewState extends State<CadastroView> {
                             if (name.text.isEmpty) {
                               dialog_ok(context, "Campo Obrigatório",
                                   "Nome é um campo obrigatório!");
+                              return;
                             }
                             if (surname.text.isEmpty) {
                               dialog_ok(context, "Campo Obrigatório",

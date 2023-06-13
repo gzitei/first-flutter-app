@@ -1,9 +1,16 @@
 // ignore_for_file: prefer_const_constructors
+import 'package:capital_especulativo_app/class/StockTransaction.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../builder/dialog_ok.dart';
+import '../builder/status_invest.dart';
 import '../controller/login_controller.dart';
 import '../builder/campo_texto.dart';
+
+import 'dart:convert';
+
+// var marx = AssetImage("lib/images/marx.png");
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -13,14 +20,23 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
   var colorRed = Color.fromRGBO(166, 87, 75, 1);
   var colorBlue = Color.fromRGBO(44, 55, 80, 1);
   var txtEmail = TextEditingController();
   var txtSenha = TextEditingController();
   var screen = (contexto) => MediaQuery.of(contexto).size;
   var hidePassword = true;
+
   @override
   Widget build(BuildContext context) {
+    txtEmail.text = "gustavo.zitei@gmail.com";
+    txtSenha.text = "@Rg478580381";
+
     var hiddenPasswordIcon =
         hidePassword ? Icon(Icons.visibility) : Icon(Icons.visibility_off);
     return Scaffold(
@@ -42,23 +58,24 @@ class _LoginViewState extends State<LoginView> {
                           shape: BoxShape.circle,
                           color: colorRed,
                           border: Border.all(color: Colors.black)),
-                      child: Image(
-                        image: AssetImage("lib/images/marx.png"),
-                        fit: BoxFit.fitHeight,
+                      child: Icon(
+                        Icons.savings,
+                        size: (screen(context).height * .25) - 40,
+                        color: Colors.white,
                       ),
                     ),
                     SizedBox(
                       height: 10,
                     ),
                     Text(
-                      "Emancipação",
+                      "BonanzaTracker",
                       style: GoogleFonts.orelegaOne(
-                          color: colorBlue, fontSize: 50, letterSpacing: 2),
+                          color: colorBlue, fontSize: 50, letterSpacing: 1),
                     ),
                     Text(
-                      "proletária",
+                      "investimentos",
                       style: GoogleFonts.orelegaOne(
-                          color: colorBlue, fontSize: 25, letterSpacing: 7),
+                          color: colorBlue, fontSize: 25, letterSpacing: 3),
                     )
                   ],
                 ),

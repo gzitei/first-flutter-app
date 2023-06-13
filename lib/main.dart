@@ -20,7 +20,7 @@ Future<void> main() async {
       builder: (context) => MaterialApp(
         useInheritedMediaQuery: true,
         debugShowCheckedModeBanner: false,
-        title: "Emancipação Proletária",
+        title: "BonanzaTracker",
         home: MyApp(),
       ),
     ),
@@ -42,7 +42,7 @@ class MyApp extends StatelessWidget {
       locale: Locale("pt", "BR"),
       supportedLocales: [Locale("pt", "BR")],
       debugShowCheckedModeBanner: false,
-      title: 'Emancipação Proletária',
+      title: 'BonanzaTracker - Investimentos',
       theme: ThemeData(),
       home: const LoginView(),
       routes: {
