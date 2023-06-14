@@ -10,9 +10,21 @@ class StockTransaction {
   final num amount;
   final String wallet_id;
   final String? id;
+  final String wallet_name;
 
-  StockTransaction(this.ticker, this.uid, this.type, this.created_at,
-      this.creation, this.quantity, this.amount, this.wallet_id, this.id);
+  StockTransaction(
+    this.ticker,
+    this.uid,
+    this.type,
+    this.created_at,
+    this.creation,
+    this.quantity,
+    this.amount,
+    this.wallet_id,
+    this.id,
+    this.wallet_name,
+  );
+
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'uid': uid,
@@ -23,20 +35,23 @@ class StockTransaction {
       'quantity': quantity,
       'amount': amount,
       'wallet_id': wallet_id,
-      'id': id
+      'id': id,
+      'wallet_name': wallet_name
     };
   }
 
   factory StockTransaction.fromJson(Map<String, dynamic> json) {
     return StockTransaction(
-        json['uid'],
-        json['ticker'],
-        json['created_at'],
-        json['type'],
-        json['creation'],
-        json['quantity'],
-        json['amount'],
-        json['wallet_id'],
-        json['id']);
+      json['ticker'],
+      json['uid'],
+      json['type'],
+      json['created_at'],
+      json['creation'],
+      json['quantity'],
+      json['amount'],
+      json['wallet_id'],
+      json['id'],
+      json['wallet_name'],
+    );
   }
 }

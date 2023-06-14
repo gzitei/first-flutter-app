@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:capital_especulativo_app/firebase_options.dart';
+import 'package:capital_especulativo_app/views/account_view.dart';
 import 'package:capital_especulativo_app/views/principal.dart';
+import 'package:capital_especulativo_app/views/transaction_view.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -48,7 +50,9 @@ class MyApp extends StatelessWidget {
       routes: {
         "cadastro": (context) => CadastroView(),
         "login": (context) => LoginView(),
-        "principal": (context) => PrincipalView()
+        "principal": (context) => PrincipalView(),
+        "transacoes": (context) => TransactionView(),
+        "conta": (context) => AccountView(),
       },
     );
   }

@@ -4,7 +4,6 @@ import 'dart:js_util';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:capital_especulativo_app/builder/feedback.dart';
 import 'package:capital_especulativo_app/class/wallet.dart';
 import 'package:capital_especulativo_app/controller/login_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

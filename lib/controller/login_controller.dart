@@ -91,4 +91,15 @@ class LoginController {
     );
     return usuario;
   }
+
+  Future<void> editarUsuario(uid, user) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('usuarios')
+          .doc(uid)
+          .set(user);
+    } catch (e) {
+      throw (e);
+    }
+  }
 }

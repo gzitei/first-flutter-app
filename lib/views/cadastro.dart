@@ -151,67 +151,68 @@ class _CadastroViewState extends State<CadastroView> {
                     Row(
                       children: [
                         Expanded(
-                            child: ElevatedButton.icon(
-                          icon: Icon(Icons.how_to_reg),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: colorRed,
-                              fixedSize: Size.fromHeight(60)),
-                          onPressed: () {
-                            if (name.text.isEmpty) {
-                              dialog_ok(context, "Campo Obrigatório",
-                                  "Nome é um campo obrigatório!");
-                              return;
-                            }
-                            if (surname.text.isEmpty) {
-                              dialog_ok(context, "Campo Obrigatório",
-                                  "Sobrenome é um campo obrigatório!");
-                              return;
-                            }
-                            if (email.text.isEmpty) {
-                              dialog_ok(context, "Campo Obrigatório",
-                                  "E-mail é um campo obrigatório!");
-                              return;
-                            }
-                            if (password.text.isEmpty) {
-                              dialog_ok(context, "Campo Obrigatório",
-                                  "Senha é um campo obrigatório!");
-                              return;
-                            }
-                            if (passwordCheck.text.isEmpty) {
-                              dialog_ok(context, "Campo Obrigatório",
-                                  "A confirmação da senha é um campo obrigatório!");
-                              return;
-                            }
-                            if (cpf.text.isEmpty) {
-                              dialog_ok(context, "Campo Obrigatório",
-                                  "CPF é um campo obrigatório!");
-                              return;
-                            }
-                            if (birth.text.isEmpty) {
-                              dialog_ok(context, "Campo Obrigatório",
-                                  "Data de nascimento é um campo obrigatório!");
-                              return;
-                            }
-                            if (passwordCheck.text != password.text) {
-                              dialog_ok(context, "Confirmação de Senha",
-                                  "Não foi possível confirmar sua senha!");
-                              return;
-                            }
-                            LoginController().criarConta(
-                              context,
-                              name.text,
-                              surname.text,
-                              email.text,
-                              password.text,
-                              cpf.text,
-                              birth.text,
-                            );
-                          },
-                          label: Text(
-                            "Cadastrar",
-                            style: GoogleFonts.robotoSlab(fontSize: 18),
+                          child: ElevatedButton.icon(
+                            icon: Icon(Icons.how_to_reg),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: colorRed,
+                                fixedSize: Size.fromHeight(60)),
+                            onPressed: () {
+                              if (name.text.isEmpty) {
+                                dialog_ok(context, "Campo Obrigatório",
+                                    "Nome é um campo obrigatório!");
+                                return;
+                              }
+                              if (surname.text.isEmpty) {
+                                dialog_ok(context, "Campo Obrigatório",
+                                    "Sobrenome é um campo obrigatório!");
+                                return;
+                              }
+                              if (email.text.isEmpty) {
+                                dialog_ok(context, "Campo Obrigatório",
+                                    "E-mail é um campo obrigatório!");
+                                return;
+                              }
+                              if (password.text.isEmpty) {
+                                dialog_ok(context, "Campo Obrigatório",
+                                    "Senha é um campo obrigatório!");
+                                return;
+                              }
+                              if (passwordCheck.text.isEmpty) {
+                                dialog_ok(context, "Campo Obrigatório",
+                                    "A confirmação da senha é um campo obrigatório!");
+                                return;
+                              }
+                              if (cpf.text.isEmpty) {
+                                dialog_ok(context, "Campo Obrigatório",
+                                    "CPF é um campo obrigatório!");
+                                return;
+                              }
+                              if (birth.text.isEmpty) {
+                                dialog_ok(context, "Campo Obrigatório",
+                                    "Data de nascimento é um campo obrigatório!");
+                                return;
+                              }
+                              if (passwordCheck.text != password.text) {
+                                dialog_ok(context, "Confirmação de Senha",
+                                    "Não foi possível confirmar sua senha!");
+                                return;
+                              }
+                              LoginController().criarConta(
+                                context,
+                                name.text,
+                                surname.text,
+                                email.text,
+                                password.text,
+                                cpf.text,
+                                birth.text,
+                              );
+                            },
+                            label: Text(
+                              "Cadastrar",
+                              style: GoogleFonts.robotoSlab(fontSize: 18),
+                            ),
                           ),
-                        )),
+                        ),
                       ],
                     )
                   ],

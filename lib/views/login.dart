@@ -70,7 +70,7 @@ class _LoginViewState extends State<LoginView> {
                     Text(
                       "BonanzaTracker",
                       style: GoogleFonts.orelegaOne(
-                          color: colorBlue, fontSize: 50, letterSpacing: 1),
+                          color: colorBlue, fontSize: 40, letterSpacing: 1),
                     ),
                     Text(
                       "investimentos",

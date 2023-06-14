@@ -4,7 +4,6 @@ import 'dart:js_util';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:capital_especulativo_app/builder/feedback.dart';
 import 'package:capital_especulativo_app/class/wallet.dart';
 import 'package:capital_especulativo_app/controller/login_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -18,14 +17,15 @@ class TransactionController {
         .collection("transacoes")
         .where('uid', isEqualTo: uid.toString())
         .get();
-    List<StockTransaction> list = [];
+    List<Map<String, dynamic>> list = [];
     wallet.docs.forEach((element) {
       var id = element.id;
-      var data = element.data();
-      list.add(StockTransaction.fromJson(data));
+      var data = element.data() as Map<String, dynamic>;
+      data["id"] = id;
+      list.add(data);
     });
     if (await list.isNotEmpty) {
-      return {"ok": true, "wallets": list};
+      return {"ok": true, "transactions": list};
     } else {
       return {"ok": false};
     }
@@ -41,8 +41,9 @@ class TransactionController {
 
   Future<void> set(StockTransaction st) async {
     try {
+      print(st.id);
       await FirebaseFirestore.instance
-          .collection("carteiras")
+          .collection("transacoes")
           .doc(st.id)
           .set(st.toJson());
     } catch (e) {
@@ -50,10 +51,10 @@ class TransactionController {
     }
   }
 
-  Future<void> delete(Wallet st) async {
+  Future<void> delete(StockTransaction st) async {
     try {
       await FirebaseFirestore.instance
-          .collection("carteiras")
+          .collection("transacoes")
           .doc(st.id)
           .delete();
     } catch (e) {

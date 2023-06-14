@@ -12,8 +12,6 @@ class CriarCarteiraView extends StatefulWidget {
 class _CriarCarteiraViewState extends State<CriarCarteiraView> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      
-    );
+    return Scaffold();
   }
 }
