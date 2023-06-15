@@ -481,7 +481,7 @@ class _PrincipalViewState extends State<PrincipalView>
                                                         Map<String, dynamic>>;
                                                 return FutureBuilder(
                                                   future: process_stocks(
-                                                      dados, carteira_id),
+                                                      carteira_id),
                                                   builder: (context, snapshot) {
                                                     if (snapshot.hasData) {
                                                       print(snapshot.data!);
@@ -563,6 +563,29 @@ class _PrincipalViewState extends State<PrincipalView>
                                                                       ),
                                                                       Text(
                                                                         "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"])}",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                12),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                  Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Text(
+                                                                        "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["preco"] * stock_info["qtt"])}",
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                16),
+                                                                      ),
+                                                                      SizedBox(
+                                                                        height:
+                                                                            5,
+                                                                      ),
+                                                                      Text(
+                                                                        "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"] * stock_info["qtt"])}",
                                                                         style: TextStyle(
                                                                             fontSize:
                                                                                 12),
@@ -684,8 +707,7 @@ class _PrincipalViewState extends State<PrincipalView>
                                 Icon(Icons.attach_money),
                                 16,
                                 false,
-                                TextInputType.numberWithOptions(
-                                    signed: false, decimal: true)),
+                                TextInputType.numberWithOptions(decimal: true)),
                           ),
                           SizedBox(
                             height: 10,

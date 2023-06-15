@@ -48,17 +48,18 @@ class _TransactionViewState extends State<TransactionView> {
         centerTitle: true,
       ),
       body: FutureBuilder(
-        future: data,
+        future: getTransactions(),
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             Map<String, dynamic> dados = snapshot.data! as Map<String, dynamic>;
             if (dados["ok"]) {
+              var lista = dados["transactions"] as List<Map<String, dynamic>>;
+              lista.sort((a, b) => b["creation"] - a["creation"]);
               return ListView.builder(
                 shrinkWrap: true,
-                itemCount: dados["transactions"].length,
+                itemCount: lista.length,
                 itemBuilder: (context, index) {
-                  var transaction =
-                      dados["transactions"][index] as Map<String, dynamic>;
+                  var transaction = lista[index] as Map<String, dynamic>;
                   return Column(
                     children: [
                       Card(
@@ -161,7 +162,7 @@ class _TransactionViewState extends State<TransactionView> {
                                           backgroundColor: Colors.blue,
                                           fixedSize: Size.fromHeight(60)),
                                       onPressed: () {
-                                        _edit = dados["transactions"][index];
+                                        _edit = lista[index];
                                         TextEditingController ticker =
                                             TextEditingController();
                                         TextEditingController qtt =
@@ -175,7 +176,8 @@ class _TransactionViewState extends State<TransactionView> {
                                               qtt.text =
                                                   _edit["quantity"].toString();
                                               amount.text =
-                                                  _edit["amount"].toString();
+                                                  NumberFormat("0.00", "pt_br")
+                                                      .format(_edit["amount"]);
                                               return AlertDialog(
                                                 title: Column(
                                                   mainAxisAlignment:
@@ -325,12 +327,8 @@ class _TransactionViewState extends State<TransactionView> {
                                                                         "Erro ao modificar.");
                                                                   }
                                                                   setState(() {
-                                                                    dados["transactions"]
-                                                                            [
-                                                                            index] =
+                                                                    lista[index] =
                                                                         _edit;
-                                                                    data =
-                                                                        getTransactions();
                                                                     i = -1;
                                                                     Navigator.of(
                                                                             context)
@@ -372,21 +370,24 @@ class _TransactionViewState extends State<TransactionView> {
                                           fixedSize: Size.fromHeight(60)),
                                       onPressed: () {
                                         var _delete = StockTransaction.fromJson(
-                                            dados["transactions"][index]);
+                                            lista[index]);
                                         try {
                                           TransactionController()
                                               .delete(_delete);
                                           showPositiveFeedback(
                                               "Transação deletada!");
+                                          setState(
+                                            () {
+                                              lista.removeAt(index);
+                                              data = getTransactions();
+                                              i = -1;
+                                            },
+                                          );
                                         } catch (e) {
                                           print(e);
                                           showNegativeFeedback(
                                               "Erro ao deletar.");
                                         }
-                                        setState(() {
-                                          data = getTransactions();
-                                          i = -1;
-                                        });
                                       },
                                       icon: Icon(
                                         Icons.delete,

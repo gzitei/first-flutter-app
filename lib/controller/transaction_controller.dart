@@ -25,10 +25,29 @@ class TransactionController {
       list.add(data);
     });
     if (await list.isNotEmpty) {
+      list.sort((a, b) => b["creation"] - a["creation"]);
       return {"ok": true, "transactions": list};
     } else {
       return {"ok": false};
     }
+  }
+
+  Future<List<Map<String, dynamic>>> getByWallet(wallet_id) async {
+    var wallet = await FirebaseFirestore.instance
+        .collection("transacoes")
+        .where('wallet_id', isEqualTo: wallet_id.toString())
+        .get();
+    List<Map<String, dynamic>> list = [];
+    wallet.docs.forEach((element) {
+      var id = element.id;
+      var data = element.data() as Map<String, dynamic>;
+      data["id"] = id;
+      list.add(data);
+    });
+    if (list.length > 0) {
+      list.sort((a, b) => b["creation"] - a["creation"]);
+    }
+    return list;
   }
 
   Future<void> add(StockTransaction st) async {

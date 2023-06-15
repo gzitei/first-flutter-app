@@ -1,12 +1,16 @@
 import 'dart:convert';
 import 'package:capital_especulativo_app/class/wallet.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 import 'package:capital_especulativo_app/scripts/stock_prices.dart';
 
-dynamic process_stocks(List<Map<String, dynamic>> stocks, wallet_id) async {
+import '../controller/transaction_controller.dart';
+
+dynamic process_stocks(wallet_id) async {
   var result;
-  stocks =
-      stocks.where((element) => element["wallet_id"] == wallet_id).toList();
+  List<Map<String, dynamic>> stocks =
+      await TransactionController().getByWallet(wallet_id);
+  print(stocks);
   try {
     var wallets = {};
     var wallet;
@@ -48,7 +52,12 @@ dynamic process_stocks(List<Map<String, dynamic>> stocks, wallet_id) async {
         print(e);
       }
     }
-    result = wallets;
+    result = {wallet_id: {}};
+    for (var key in wallets[wallet_id].keys) {
+      if (wallets[wallet_id][key]["qtt"] > 0) {
+        result[wallet_id][key] = wallets[wallet_id][key];
+      }
+    }
   } catch (e) {
     result = {};
   }
