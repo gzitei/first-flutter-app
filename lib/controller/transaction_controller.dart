@@ -42,6 +42,7 @@ class TransactionController {
       var id = element.id;
       var data = element.data() as Map<String, dynamic>;
       data["id"] = id;
+      print(id);
       list.add(data);
     });
     if (list.length > 0) {

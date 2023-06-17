@@ -11,6 +11,7 @@ import 'package:capital_especulativo_app/class/wallet.dart';
 import 'package:capital_especulativo_app/controller/login_controller.dart';
 import 'package:capital_especulativo_app/controller/transaction_controller.dart';
 import 'package:capital_especulativo_app/controller/wallet_controller.dart';
+import 'package:capital_especulativo_app/views/widget_wallet.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -230,86 +231,90 @@ class _PrincipalViewState extends State<PrincipalView>
             padding: EdgeInsets.all(30),
             child: Column(
               children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        icon: Icon(Icons.add),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: colorRed,
-                            fixedSize: Size.fromHeight(40)),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                var wallet_name = TextEditingController();
-                                return AlertDialog(
-                                  insetPadding: EdgeInsets.all(10),
-                                  title: Text("Nome da Carteira"),
-                                  content: Container(
-                                    width: 300,
-                                    padding: EdgeInsets.all(10),
-                                    child: campoTexto(
-                                      "Nome da Carteira",
-                                      wallet_name,
-                                      Icon(Icons.account_balance_wallet),
-                                      16,
-                                      false,
-                                      TextInputType.name,
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                      child: const Text(
-                                        "Cancelar",
-                                        style: TextStyle(fontSize: 16),
+                SizedBox(
+                  width: 600,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          icon: Icon(Icons.add),
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: colorRed,
+                              fixedSize: Size.fromHeight(40)),
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  var wallet_name = TextEditingController();
+                                  return AlertDialog(
+                                    insetPadding: EdgeInsets.all(10),
+                                    title: Text("Nome da Carteira"),
+                                    content: Container(
+                                      width: 300,
+                                      padding: EdgeInsets.all(10),
+                                      child: campoTexto(
+                                        "Nome da Carteira",
+                                        wallet_name,
+                                        Icon(Icons.account_balance_wallet),
+                                        16,
+                                        false,
+                                        TextInputType.name,
                                       ),
-                                      onPressed: () => {Navigator.pop(context)},
                                     ),
-                                    TextButton(
-                                      child: const Text(
-                                        "Criar",
-                                        style: TextStyle(fontSize: 16),
+                                    actions: [
+                                      TextButton(
+                                        child: const Text(
+                                          "Cancelar",
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                        onPressed: () =>
+                                            {Navigator.pop(context)},
                                       ),
-                                      onPressed: () {
-                                        if (wallet_name.text.isNotEmpty) {
-                                          Navigator.pop(context);
-                                          var agora = DateTime.now();
-                                          var created_at =
-                                              DateFormat.yMd("pt_BR")
-                                                  .format(agora);
-                                          var creation =
-                                              agora.millisecondsSinceEpoch;
-                                          var transactions = [];
-                                          var id = null;
-                                          var nome = wallet_name.text;
-                                          Wallet(uid, created_at, creation,
-                                              transactions, id, nome);
-                                          try {
-                                            WalletController().add(nome, uid);
-                                            showPositiveFeedback(
-                                                "Carteira criada!");
-                                          } catch (e) {
-                                            showNegativeFeedback(
-                                                "Erro ao criar carteira!");
+                                      TextButton(
+                                        child: const Text(
+                                          "Criar",
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                        onPressed: () {
+                                          if (wallet_name.text.isNotEmpty) {
+                                            Navigator.pop(context);
+                                            var agora = DateTime.now();
+                                            var created_at =
+                                                DateFormat.yMd("pt_BR")
+                                                    .format(agora);
+                                            var creation =
+                                                agora.millisecondsSinceEpoch;
+                                            var transactions = [];
+                                            var id = null;
+                                            var nome = wallet_name.text;
+                                            Wallet(uid, created_at, creation,
+                                                transactions, id, nome);
+                                            try {
+                                              WalletController().add(nome, uid);
+                                              showPositiveFeedback(
+                                                  "Carteira criada!");
+                                            } catch (e) {
+                                              showNegativeFeedback(
+                                                  "Erro ao criar carteira!");
+                                            }
+                                            setState(() {
+                                              _future_carteira = getWallet();
+                                            });
                                           }
-                                          setState(() {
-                                            _future_carteira = getWallet();
-                                          });
-                                        }
-                                      },
-                                    )
-                                  ],
-                                );
-                              });
-                        },
-                        label: Text(
-                          "Nova Carteira",
-                          style: GoogleFonts.robotoSlab(fontSize: 18),
+                                        },
+                                      )
+                                    ],
+                                  );
+                                });
+                          },
+                          label: Text(
+                            "Nova Carteira",
+                            style: GoogleFonts.robotoSlab(fontSize: 18),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 SizedBox(
                   height: 10,
@@ -337,303 +342,150 @@ class _PrincipalViewState extends State<PrincipalView>
                             }
                           }
                           if (true) {
-                            return ListView.builder(
-                              itemCount: _wallets.length,
-                              itemBuilder: (context, index) {
-                                var current_wallet = _wallets[index] as Wallet;
-                                return Column(
-                                  children: [
-                                    Card(
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(5.0),
-                                      ),
-                                      margin: EdgeInsets.symmetric(vertical: 5),
-                                      child: Container(
-                                        height: 60,
-                                        decoration: BoxDecoration(
-                                          color: colorBlue,
+                            return SizedBox(
+                              width: 600,
+                              child: ListView.builder(
+                                itemCount: _wallets.length,
+                                itemBuilder: (context, index) {
+                                  var current_wallet =
+                                      _wallets[index] as Wallet;
+                                  return Column(
+                                    children: [
+                                      Card(
+                                        shape: RoundedRectangleBorder(
                                           borderRadius:
                                               BorderRadius.circular(5.0),
-                                          // gradient: LinearGradient(
-                                          //     colors: [
-                                          //       Colors.green,
-                                          //       colorBlue
-                                          //     ],
-                                          //     begin: Alignment.bottomRight,
-                                          //     end: Alignment.topCenter),
                                         ),
-                                        child: Center(
-                                          child: ListTile(
-                                            onTap: () {
-                                              setState(() {
-                                                var atual = visibility[index];
-                                                for (var i = 0;
-                                                    i < visibility.length;
-                                                    i++) {
-                                                  visibility[i] = false;
-                                                }
-                                                if (!atual) {
-                                                  visibility[index] = true;
-                                                }
-                                              });
-                                            },
-                                            title: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    _wallets[index].nome,
-                                                    style: TextStyle(
-                                                        color: Colors.white),
-                                                  ),
-                                                  // Text(
-                                                  //   "45%",
-                                                  //   style: TextStyle(
-                                                  //       color: Colors.white),
-                                                  // ),
-                                                ]),
-                                            leading: Icon(
-                                              Icons.monetization_on_outlined,
-                                              color: Colors.white,
-                                            ),
-                                            trailing: GestureDetector(
-                                              child: Icon(
-                                                Icons.delete,
+                                        margin:
+                                            EdgeInsets.symmetric(vertical: 5),
+                                        child: Container(
+                                          height: 60,
+                                          decoration: BoxDecoration(
+                                            color: colorBlue,
+                                            borderRadius:
+                                                BorderRadius.circular(5.0),
+                                            // gradient: LinearGradient(
+                                            //     colors: [
+                                            //       Colors.green,
+                                            //       colorBlue
+                                            //     ],
+                                            //     begin: Alignment.bottomRight,
+                                            //     end: Alignment.topCenter),
+                                          ),
+                                          child: Center(
+                                            child: ListTile(
+                                              onTap: () {
+                                                setState(() {
+                                                  var atual = visibility[index];
+                                                  for (var i = 0;
+                                                      i < visibility.length;
+                                                      i++) {
+                                                    visibility[i] = false;
+                                                  }
+                                                  if (!atual) {
+                                                    visibility[index] = true;
+                                                  }
+                                                });
+                                              },
+                                              title: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Text(
+                                                      _wallets[index].nome,
+                                                      style: TextStyle(
+                                                          color: Colors.white),
+                                                    ),
+                                                    // Text(
+                                                    //   "45%",
+                                                    //   style: TextStyle(
+                                                    //       color: Colors.white),
+                                                    // ),
+                                                  ]),
+                                              leading: Icon(
+                                                Icons.monetization_on_outlined,
                                                 color: Colors.white,
                                               ),
-                                              onTap: () {
-                                                showDialog(
-                                                    context: context,
-                                                    builder: (context) {
-                                                      return AlertDialog(
-                                                          title: Text(
-                                                              "Deseja deletar?"),
-                                                          content: Text(
-                                                              "Não será possível desfazer sua ação."),
-                                                          actions: [
-                                                            TextButton(
-                                                              child: const Text(
-                                                                "Cancelar",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16),
+                                              trailing: GestureDetector(
+                                                child: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.white,
+                                                ),
+                                                onTap: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return AlertDialog(
+                                                            title: Text(
+                                                                "Deseja deletar?"),
+                                                            content: Text(
+                                                                "Não será possível desfazer sua ação."),
+                                                            actions: [
+                                                              TextButton(
+                                                                child:
+                                                                    const Text(
+                                                                  "Cancelar",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16),
+                                                                ),
+                                                                onPressed: () =>
+                                                                    {
+                                                                  Navigator.pop(
+                                                                      context)
+                                                                },
                                                               ),
-                                                              onPressed: () => {
-                                                                Navigator.pop(
-                                                                    context)
-                                                              },
-                                                            ),
-                                                            TextButton(
-                                                              child: const Text(
-                                                                "Confirmar",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16),
-                                                              ),
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                    context);
-                                                                setState(() {
-                                                                  var _deleteWallet =
-                                                                      _wallets[
-                                                                          index];
-                                                                  visibility
-                                                                      .removeAt(
-                                                                          index);
-                                                                  try {
-                                                                    WalletController().delete(
-                                                                        _deleteWallet,
-                                                                        context);
-                                                                    showPositiveFeedback(
-                                                                      "Carteira deletada!",
-                                                                    );
-                                                                  } catch (e) {
-                                                                    showNegativeFeedback(
-                                                                        "Erro ao deletar carteira.");
-                                                                  }
-                                                                  _future_carteira =
-                                                                      WalletController()
-                                                                          .get(
-                                                                              uid);
-                                                                });
-                                                              },
-                                                            )
-                                                          ]);
-                                                    });
-                                              },
+                                                              TextButton(
+                                                                child:
+                                                                    const Text(
+                                                                  "Confirmar",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          16),
+                                                                ),
+                                                                onPressed: () {
+                                                                  Navigator.pop(
+                                                                      context);
+                                                                  setState(() {
+                                                                    var _deleteWallet =
+                                                                        _wallets[
+                                                                            index];
+                                                                    visibility
+                                                                        .removeAt(
+                                                                            index);
+                                                                    try {
+                                                                      WalletController().delete(
+                                                                          _deleteWallet,
+                                                                          context);
+                                                                      showPositiveFeedback(
+                                                                        "Carteira deletada!",
+                                                                      );
+                                                                    } catch (e) {
+                                                                      showNegativeFeedback(
+                                                                          "Erro ao deletar carteira.");
+                                                                    }
+                                                                    _future_carteira =
+                                                                        WalletController()
+                                                                            .get(uid);
+                                                                  });
+                                                                },
+                                                              )
+                                                            ]);
+                                                      });
+                                                },
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    visibility[index] == false
-                                        ? Container()
-                                        : FutureBuilder(
-                                            future: getTransactions(),
-                                            builder: (context, snapshot) {
-                                              var carteira_id =
-                                                  _wallets[index].id;
-                                              if (snapshot.hasData) {
-                                                var dados = snapshot.data!
-                                                    as List<
-                                                        Map<String, dynamic>>;
-                                                return FutureBuilder(
-                                                  future: process_stocks(
-                                                      carteira_id),
-                                                  builder: (context, snapshot) {
-                                                    if (snapshot.hasData) {
-                                                      print(snapshot.data!);
-                                                      Map<String, dynamic>
-                                                          snapshotdata =
-                                                          json.decode(json
-                                                              .encode(snapshot
-                                                                  .data!));
-                                                      if (snapshotdata
-                                                          .entries.isEmpty) {
-                                                        return Container();
-                                                      }
-                                                      var carteira_aberta =
-                                                          snapshotdata[
-                                                              current_wallet
-                                                                  .id];
-                                                      List<String> keys =
-                                                          List.from(
-                                                              carteira_aberta
-                                                                  .keys);
-                                                      return ListView.builder(
-                                                        shrinkWrap: true,
-                                                        padding:
-                                                            EdgeInsets.all(5),
-                                                        itemCount: keys.length,
-                                                        itemBuilder:
-                                                            (context, pos) {
-                                                          var this_stock =
-                                                              keys[pos];
-                                                          var stock_info =
-                                                              carteira_aberta[
-                                                                      this_stock]
-                                                                  as Map<String,
-                                                                      dynamic>;
-                                                          print(stock_info);
-                                                          return Card(
-                                                            elevation: 2,
-                                                            shadowColor:
-                                                                Colors.black,
-                                                            borderOnForeground:
-                                                                true,
-                                                            margin: EdgeInsets
-                                                                .symmetric(
-                                                                    vertical: 5,
-                                                                    horizontal:
-                                                                        5),
-                                                            child: ListTile(
-                                                              contentPadding:
-                                                                  EdgeInsets
-                                                                      .all(8),
-                                                              title: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .spaceBetween,
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Text(
-                                                                    this_stock,
-                                                                    style: TextStyle(
-                                                                        fontSize:
-                                                                            16),
-                                                                  ),
-                                                                  Column(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      Text(
-                                                                        "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["preco"])}",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                16),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height:
-                                                                            5,
-                                                                      ),
-                                                                      Text(
-                                                                        "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"])}",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                12),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                  Column(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .center,
-                                                                    children: [
-                                                                      Text(
-                                                                        "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["preco"] * stock_info["qtt"])}",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                16),
-                                                                      ),
-                                                                      SizedBox(
-                                                                        height:
-                                                                            5,
-                                                                      ),
-                                                                      Text(
-                                                                        "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"] * stock_info["qtt"])}",
-                                                                        style: TextStyle(
-                                                                            fontSize:
-                                                                                12),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                              subtitle: Text(
-                                                                  stock_info[
-                                                                      "nome"]),
-                                                              trailing: stock_info[
-                                                                          "preco"] >=
-                                                                      stock_info[
-                                                                          "media"]
-                                                                  ? Icon(
-                                                                      Icons
-                                                                          .arrow_circle_up,
-                                                                      color: Colors
-                                                                          .green,
-                                                                    )
-                                                                  : Icon(
-                                                                      Icons
-                                                                          .arrow_circle_down,
-                                                                      color: Colors
-                                                                          .red,
-                                                                    ),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-                                                    }
-                                                    return Center(
-                                                      child:
-                                                          CircularProgressIndicator(),
-                                                    );
-                                                  },
-                                                );
-                                              }
-                                              return Center(
-                                                child:
-                                                    CircularProgressIndicator(),
-                                              );
-                                            },
-                                          )
-                                  ],
-                                );
-                              },
+                                      visibility[index] == false
+                                          ? Container()
+                                          : listWallet(_wallets[index].id)
+                                    ],
+                                  );
+                                },
+                              ),
                             );
                           }
                         } else {
@@ -667,7 +519,8 @@ class _PrincipalViewState extends State<PrincipalView>
                     var carteira_name = element.data()["nome"];
                     DropdownMenuEntry DropdownOption = DropdownMenuEntry(
                       label: carteira_name,
-                      value: {"id": carteira_id, "name": carteira_name},
+                      value: json
+                          .encode({"id": carteira_id, "name": carteira_name}),
                       enabled: true,
                     );
                     carteira_options.add(DropdownOption);
@@ -742,9 +595,10 @@ class _PrincipalViewState extends State<PrincipalView>
                               width: largura,
                               leadingIcon: Icon(Icons.account_balance_wallet),
                               onSelected: (value) {
+                                var obj = json.decode(value);
                                 setState(() {
-                                  transactionCarteiraId.text = value["id"];
-                                  transactionCarteiraName.text = value["name"];
+                                  transactionCarteiraId.text = obj["id"];
+                                  transactionCarteiraName.text = obj["name"];
                                 });
                               },
                               textStyle: GoogleFonts.robotoSlab(fontSize: 14),

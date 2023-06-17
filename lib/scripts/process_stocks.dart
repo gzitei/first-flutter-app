@@ -1,65 +1,72 @@
 import 'dart:convert';
 import 'package:capital_especulativo_app/class/wallet.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:intl/intl.dart';
 import 'package:capital_especulativo_app/scripts/stock_prices.dart';
 
 import '../controller/transaction_controller.dart';
 
 dynamic process_stocks(wallet_id) async {
-  var result;
+  print(wallet_id);
+  var result = {};
+  var res = {};
   List<Map<String, dynamic>> stocks =
       await TransactionController().getByWallet(wallet_id);
+  dynamic quantidade, valor, media;
   print(stocks);
-  try {
-    var wallets = {};
-    var wallet;
-    num quantidade, valor, media;
-    for (var stock in stocks) {
-      try {
-        var ticker = stock["ticker"];
-        var price = await getStockPrices(ticker);
-        var wallet_id = stock["wallet_id"];
-        if (!wallets.containsKey(wallet_id)) {
-          wallets[wallet_id] = {};
-        }
-        wallet = wallets[wallet_id];
-        if (!wallet.containsKey(ticker)) {
-          wallets[wallet_id][ticker] = {
-            "valor": 0,
-            "qtt": 0,
-            "media": 0,
-            "nome": price["longName"],
-            "preco": price["regularMarketPrice"],
-            "setor": price["industryDisp"],
-            "subsetor": price["sector"]
-          };
-        }
-        quantidade = wallets[wallet_id][ticker]["qtt"];
-        valor = wallets[wallet_id][ticker]["valor"];
-        media = wallets[wallet_id][ticker]["media"];
-        if (stock["type"] == "COMPRA") {
-          quantidade = quantidade + stock["quantity"];
-          valor = valor + stock["amount"];
-        } else {
-          quantidade = quantidade - stock["quantity"];
-          valor = valor - stock["amount"];
-        }
-        wallets[wallet_id][ticker]["qtt"] = quantidade;
-        wallets[wallet_id][ticker]["valor"] = valor;
-        wallets[wallet_id][ticker]["media"] = valor / quantidade;
-      } catch (e) {
-        print(e);
-      }
+  for (var stock in stocks) {
+    valor = 0;
+    media = 0;
+    quantidade = 0;
+    print(stock);
+    var ticker = stock["ticker"];
+    if (!result.containsKey(ticker)) {
+      result[ticker] = {"valor": valor, "qtt": quantidade, "media": media};
+      print(result[ticker]);
     }
-    result = {wallet_id: {}};
-    for (var key in wallets[wallet_id].keys) {
-      if (wallets[wallet_id][key]["qtt"] > 0) {
-        result[wallet_id][key] = wallets[wallet_id][key];
-      }
+    quantidade = result[ticker]["qtt"];
+    valor = result[ticker]["valor"];
+    media = result[ticker]["media"];
+    if (stock["type"] == "COMPRA") {
+      print("compra");
+      quantidade = quantidade + stock["quantity"];
+      valor = valor + stock["amount"];
+    } else {
+      print("venda");
+      quantidade = quantidade - stock["quantity"];
+      valor = valor - stock["amount"];
     }
-  } catch (e) {
-    result = {};
+    print("calculado!");
+    result[ticker] = {
+      "media": valor / quantidade,
+      "qtt": quantidade,
+      "valor": valor
+    };
+    print(result[ticker]);
+    print(result);
   }
-  return result;
+  for (var key in result.keys) {
+    print(key);
+    if (result[key]["qtt"] > 0) {
+      res[key] = result[key];
+    }
+  }
+  print(res);
+  return res;
+}
+
+dynamic get_price(ticker) async {
+  var price = await getStockPrices(ticker);
+  print(price);
+  return {
+    "nome": price["longName"],
+    "preco": price["regularMarketPrice"],
+    "setor": price["industryDisp"],
+    "subsetor": price["sector"]
+  };
+}
+
+void main() {
+  process_stocks("5v20eZdJZQVMk7ymPTdsjqFRUim2");
 }

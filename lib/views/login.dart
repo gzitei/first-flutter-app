@@ -34,9 +34,6 @@ class _LoginViewState extends State<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    txtEmail.text = "gustavo.zitei@gmail.com";
-    txtSenha.text = "@Rg478580381";
-
     var hiddenPasswordIcon =
         hidePassword ? Icon(Icons.visibility) : Icon(Icons.visibility_off);
     return Scaffold(

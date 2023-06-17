@@ -17,15 +17,7 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(
-    DevicePreview(
-      enabled: true,
-      builder: (context) => MaterialApp(
-        useInheritedMediaQuery: true,
-        debugShowCheckedModeBanner: false,
-        title: "BonanzaTracker",
-        home: MyApp(),
-      ),
-    ),
+    MyApp(),
   );
 }
 
