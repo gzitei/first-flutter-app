@@ -238,7 +238,6 @@ class _PrincipalViewState extends State<PrincipalView>
                   data["wallets"].forEach((e) {
                     var wallet = e.data() as Map<String, dynamic>;
                     wallet["id"] = e.id;
-                    print(wallet);
                     wallets.add(Wallet.fromJson(wallet));
                   });
                   wallets.sort(
@@ -349,7 +348,6 @@ class _PrincipalViewState extends State<PrincipalView>
                                 child: Center(
                                   child: ListTile(
                                     onTap: () {
-                                      print(index);
                                       setState(() {
                                         i != index ? i = index : i = -1;
                                       });
@@ -438,14 +436,12 @@ class _PrincipalViewState extends State<PrincipalView>
                                     future:
                                         process_stocks(wallets[index - 1].id),
                                     builder: (context, snapshot) {
-                                      var subtitle = null;
                                       return FutureBuilder(
                                         future: process_stocks(
                                             wallets[index - 1].id),
                                         builder: (context, snapshot) {
                                           var screenSize =
                                               MediaQuery.of(context).size.width;
-                                          print(screenSize);
                                           if (snapshot.hasData) {
                                             Map<String, dynamic> snapshotdata =
                                                 json.decode(json
@@ -510,61 +506,6 @@ class _PrincipalViewState extends State<PrincipalView>
                                                     ),
                                                   ),
                                                 ];
-                                                subtitle = FutureBuilder(
-                                                  future: stock_price,
-                                                  builder: (context, price) {
-                                                    if (price.hasData) {
-                                                      var cotacao = price.data!
-                                                          as Map<String,
-                                                              dynamic>;
-                                                      return Text(
-                                                        "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(cotacao["preco"] * stock_info["qtt"])} (${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"] * stock_info["qtt"])})",
-                                                        style: TextStyle(
-                                                          fontSize: 12,
-                                                        ),
-                                                      );
-                                                    }
-                                                    return CircularProgressIndicator();
-                                                  },
-                                                );
-                                                if (screenSize > 450) {
-                                                  children.add(
-                                                    Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        FutureBuilder(
-                                                          future: stock_price,
-                                                          builder:
-                                                              (context, price) {
-                                                            if (price.hasData) {
-                                                              var cotacao = price
-                                                                      .data!
-                                                                  as Map<String,
-                                                                      dynamic>;
-                                                              return Text(
-                                                                "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(cotacao["preco"])}",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16),
-                                                              );
-                                                            }
-                                                            return CircularProgressIndicator();
-                                                          },
-                                                        ),
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        Text(
-                                                          "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"])}",
-                                                          style: TextStyle(
-                                                              fontSize: 12),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  );
-                                                }
                                                 return Card(
                                                   elevation: 2,
                                                   shadowColor: Colors.black,
@@ -614,14 +555,151 @@ class _PrincipalViewState extends State<PrincipalView>
                                                                 .center,
                                                         children: children),
                                                     subtitle: Padding(
-                                                      padding:
-                                                          const EdgeInsets.all(
-                                                              8.0),
+                                                      padding: const EdgeInsets
+                                                              .symmetric(
+                                                          vertical: 5,
+                                                          horizontal: 0),
                                                       child: Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          children: [subtitle]),
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          FutureBuilder(
+                                                            future: stock_price,
+                                                            builder: (context,
+                                                                price) {
+                                                              if (price
+                                                                  .hasData) {
+                                                                var cotacao = price
+                                                                        .data!
+                                                                    as Map<
+                                                                        String,
+                                                                        dynamic>;
+                                                                return Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                      Icons
+                                                                          .attach_money,
+                                                                      size: 12,
+                                                                    ),
+                                                                    SizedBox(
+                                                                      width: 3,
+                                                                    ),
+                                                                    Column(
+                                                                      children: [
+                                                                        Text(
+                                                                          "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(cotacao["preco"] * stock_info["qtt"])}",
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                10,
+                                                                          ),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          height:
+                                                                              3,
+                                                                        ),
+                                                                        Text(
+                                                                          "(${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"] * stock_info["qtt"])})",
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                10,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              }
+                                                              return CircularProgressIndicator();
+                                                            },
+                                                          ),
+                                                          Row(
+                                                            children: [
+                                                              Icon(
+                                                                Icons
+                                                                    .filter_none,
+                                                                size: 12,
+                                                              ),
+                                                              SizedBox(
+                                                                width: 3,
+                                                              ),
+                                                              Text(
+                                                                "${stock_info["qtt"]}",
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 10,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          FutureBuilder(
+                                                            future: stock_price,
+                                                            builder: (context,
+                                                                price) {
+                                                              if (price
+                                                                  .hasData) {
+                                                                var cotacao = price
+                                                                        .data!
+                                                                    as Map<
+                                                                        String,
+                                                                        dynamic>;
+                                                                return Row(
+                                                                  children: [
+                                                                    cotacao["preco"] ==
+                                                                            stock_info[
+                                                                                "media"]
+                                                                        ? Icon(
+                                                                            Icons.arrow_forward,
+                                                                            size:
+                                                                                12,
+                                                                          )
+                                                                        : cotacao["preco"] >
+                                                                                stock_info["media"]
+                                                                            ? Icon(
+                                                                                Icons.arrow_upward,
+                                                                                size: 12,
+                                                                              )
+                                                                            : Icon(
+                                                                                Icons.arrow_downward,
+                                                                                size: 12,
+                                                                              ),
+                                                                    SizedBox(
+                                                                      width: 3,
+                                                                    ),
+                                                                    Column(
+                                                                      children: [
+                                                                        Text(
+                                                                          "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(cotacao["preco"])}",
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                10,
+                                                                          ),
+                                                                        ),
+                                                                        SizedBox(
+                                                                          height:
+                                                                              3,
+                                                                        ),
+                                                                        Text(
+                                                                          "(${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"])})",
+                                                                          style:
+                                                                              TextStyle(
+                                                                            fontSize:
+                                                                                10,
+                                                                          ),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                );
+                                                              }
+                                                              return CircularProgressIndicator();
+                                                            },
+                                                          ),
+                                                        ],
+                                                      ),
                                                     ),
                                                     trailing: FutureBuilder(
                                                       future: stock_price,

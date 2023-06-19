@@ -55,141 +55,169 @@ class _TransactionViewState extends State<TransactionView> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              ElevatedButton.icon(
-                label: Text(
-                  "Filtrar",
-                  style: GoogleFonts.robotoSlab(fontSize: 18),
-                ),
-                icon: Icon(Icons.filter_alt),
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: colorRed, fixedSize: Size.fromHeight(40)),
-                onPressed: () {
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        var wallet_name = TextEditingController();
-                        return AlertDialog(
-                          insetPadding: EdgeInsets.all(10),
-                          title: Text("Filtrar Transações"),
-                          content: FutureBuilder(
-                            future: data,
-                            builder: (context, snapshot) {
-                              if (snapshot.hasData) {
-                                var resultado =
-                                    snapshot.data! as Map<String, dynamic>;
-                                if (resultado["ok"] == false) {
-                                  return Container();
-                                }
-                                var transacoes = resultado["transactions"]
-                                    as List<Map<String, dynamic>>;
-                                var lista_acoes = transacoes
-                                    .map((e) => e["ticker"])
-                                    .toSet()
-                                    .toList();
-                                var lista_carteiras = transacoes
-                                    .map((e) => e["wallet_name"])
-                                    .toSet()
-                                    .toList();
-                                List<DropdownMenuEntry> type_options = [
-                                  DropdownMenuEntry(value: "", label: ""),
-                                  DropdownMenuEntry(
-                                      value: "VENDA", label: "Vendas"),
-                                  DropdownMenuEntry(
-                                      value: "COMPRA", label: "Compras"),
-                                ];
-                                List<DropdownMenuEntry> stocks_options = [
-                                  DropdownMenuEntry(value: "", label: ""),
-                                ];
-                                List<DropdownMenuEntry> wallet_options = [
-                                  DropdownMenuEntry(value: "", label: ""),
-                                ];
-                                lista_acoes.forEach((element) {
-                                  stocks_options.add(DropdownMenuEntry(
-                                      label: element, value: element));
-                                });
-                                lista_carteiras.forEach((element) {
-                                  wallet_options.add(DropdownMenuEntry(
-                                      label: element, value: element));
-                                });
-                                return Container(
-                                  height: 180,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      DropdownMenu(
-                                        textStyle: TextStyle(fontSize: 12),
-                                        width: 140,
-                                        label: Text("Tipo"),
-                                        dropdownMenuEntries: type_options,
-                                        onSelected: (value) {
-                                          setState(() {
-                                            filter["type"] = value;
-                                          });
-                                        },
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      DropdownMenu(
-                                        textStyle: TextStyle(fontSize: 12),
-                                        width: 140,
-                                        label: Text("Ação"),
-                                        dropdownMenuEntries: stocks_options,
-                                        onSelected: (value) {
-                                          setState(() {
-                                            filter["ticker"] = value;
-                                          });
-                                        },
-                                      ),
-                                      SizedBox(
-                                        height: 10,
-                                      ),
-                                      DropdownMenu(
-                                        textStyle: TextStyle(fontSize: 12),
-                                        width: 230,
-                                        label: Text("Carteira"),
-                                        dropdownMenuEntries: wallet_options,
-                                        onSelected: (value) {
-                                          setState(
-                                            () {
-                                              filter["wallet_name"] = value;
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    label: Text(
+                      "Filtrar",
+                      style: GoogleFonts.robotoSlab(fontSize: 18),
+                    ),
+                    icon: Icon(Icons.filter_alt),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: colorRed,
+                        fixedSize: Size.fromHeight(40)),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (context) {
+                            var wallet_name = TextEditingController();
+                            return AlertDialog(
+                              insetPadding: EdgeInsets.all(10),
+                              title: Text("Filtrar Transações"),
+                              content: FutureBuilder(
+                                future: data,
+                                builder: (context, snapshot) {
+                                  if (snapshot.hasData) {
+                                    var resultado =
+                                        snapshot.data! as Map<String, dynamic>;
+                                    if (resultado["ok"] == false) {
+                                      return Container();
+                                    }
+                                    var transacoes = resultado["transactions"]
+                                        as List<Map<String, dynamic>>;
+                                    var lista_acoes = transacoes
+                                        .map((e) => e["ticker"])
+                                        .toSet()
+                                        .toList();
+                                    var lista_carteiras = transacoes
+                                        .map((e) => e["wallet_name"])
+                                        .toSet()
+                                        .toList();
+                                    List<DropdownMenuEntry> type_options = [
+                                      DropdownMenuEntry(value: "", label: ""),
+                                      DropdownMenuEntry(
+                                          value: "VENDA", label: "Vendas"),
+                                      DropdownMenuEntry(
+                                          value: "COMPRA", label: "Compras"),
+                                    ];
+                                    List<DropdownMenuEntry> stocks_options = [
+                                      DropdownMenuEntry(value: "", label: ""),
+                                    ];
+                                    List<DropdownMenuEntry> wallet_options = [
+                                      DropdownMenuEntry(value: "", label: ""),
+                                    ];
+                                    lista_acoes.forEach((element) {
+                                      stocks_options.add(DropdownMenuEntry(
+                                          label: element, value: element));
+                                    });
+                                    lista_carteiras.forEach((element) {
+                                      wallet_options.add(DropdownMenuEntry(
+                                          label: element, value: element));
+                                    });
+                                    return Container(
+                                      height: 180,
+                                      child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          DropdownMenu(
+                                            textStyle: TextStyle(fontSize: 12),
+                                            width: 140,
+                                            label: Text("Operação"),
+                                            dropdownMenuEntries: type_options,
+                                            onSelected: (value) {
+                                              setState(() {
+                                                filter["type"] = value;
+                                              });
                                             },
-                                          );
-                                        },
-                                      )
-                                    ],
-                                  ),
-                                );
-                              }
-                              return Center(child: CircularProgressIndicator());
-                            },
-                          ),
-                          actions: [
-                            TextButton(
-                              child: const Text(
-                                "Limpar Filtros",
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              onPressed: () {
-                                Navigator.pop(context);
-                                setState(() {
-                                  for (var key in filter.keys) {
-                                    filter[key] = "";
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          DropdownMenu(
+                                            textStyle: TextStyle(fontSize: 12),
+                                            width: 140,
+                                            label: Text("Ação"),
+                                            dropdownMenuEntries: stocks_options,
+                                            onSelected: (value) {
+                                              setState(() {
+                                                filter["ticker"] = value;
+                                              });
+                                            },
+                                          ),
+                                          SizedBox(
+                                            height: 10,
+                                          ),
+                                          DropdownMenu(
+                                            textStyle: TextStyle(fontSize: 12),
+                                            width: 230,
+                                            label: Text("Carteira"),
+                                            dropdownMenuEntries: wallet_options,
+                                            onSelected: (value) {
+                                              setState(
+                                                () {
+                                                  filter["wallet_name"] = value;
+                                                },
+                                              );
+                                            },
+                                          )
+                                        ],
+                                      ),
+                                    );
                                   }
-                                });
-                              },
-                            ),
-                            TextButton(
-                              child: const Text(
-                                "OK",
-                                style: TextStyle(fontSize: 16),
+                                  return Center(
+                                      child: CircularProgressIndicator());
+                                },
                               ),
-                              onPressed: () => {Navigator.pop(context)},
-                            ),
-                          ],
-                        );
+                              actions: [
+                                TextButton(
+                                  child: const Text(
+                                    "Limpar Filtros",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    setState(() {
+                                      for (var key in filter.keys) {
+                                        filter[key] = "";
+                                      }
+                                    });
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text(
+                                    "OK",
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  onPressed: () => {Navigator.pop(context)},
+                                ),
+                              ],
+                            );
+                          });
+                    },
+                  ),
+                  SizedBox(
+                    width: 20,
+                  ),
+                  ElevatedButton.icon(
+                    label: Text(
+                      "Limpar",
+                      style: GoogleFonts.robotoSlab(fontSize: 18),
+                    ),
+                    icon: Icon(Icons.filter_alt_off),
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: colorRed,
+                        fixedSize: Size.fromHeight(40)),
+                    onPressed: () {
+                      setState(() {
+                        for (var key in filter.keys) {
+                          filter[key] = "";
+                        }
                       });
-                },
+                    },
+                  ),
+                ],
               ),
               FutureBuilder(
                 future: getTransactions(),
@@ -258,64 +286,68 @@ class _TransactionViewState extends State<TransactionView> {
                                       )
                                     ],
                                   ),
-                                  subtitle: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      Container(
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.savings,
-                                              size: 15,
-                                            ),
-                                            SizedBox(
-                                              width: 2,
-                                            ),
-                                            Text(
-                                              transaction["wallet_name"],
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                          ],
+                                  subtitle: Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(0, 10, 0, 5),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      children: [
+                                        Container(
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.savings,
+                                                size: 15,
+                                              ),
+                                              SizedBox(
+                                                width: 2,
+                                              ),
+                                              Text(
+                                                transaction["wallet_name"],
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      Container(
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.filter_none,
-                                              size: 15,
-                                            ),
-                                            SizedBox(
-                                              width: 2,
-                                            ),
-                                            Text(
-                                              transaction["quantity"]
-                                                  .toString(),
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                          ],
+                                        Container(
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.filter_none,
+                                                size: 15,
+                                              ),
+                                              SizedBox(
+                                                width: 2,
+                                              ),
+                                              Text(
+                                                transaction["quantity"]
+                                                    .toString(),
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      Container(
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.calendar_month,
-                                              size: 15,
-                                            ),
-                                            SizedBox(
-                                              width: 2,
-                                            ),
-                                            Text(
-                                              transaction["created_at"]
-                                                  .toString(),
-                                              style: TextStyle(fontSize: 12),
-                                            ),
-                                          ],
-                                        ),
-                                      )
-                                    ],
+                                        Container(
+                                          child: Row(
+                                            children: [
+                                              Icon(
+                                                Icons.calendar_month,
+                                                size: 15,
+                                              ),
+                                              SizedBox(
+                                                width: 2,
+                                              ),
+                                              Text(
+                                                transaction["created_at"]
+                                                    .toString(),
+                                                style: TextStyle(fontSize: 12),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
