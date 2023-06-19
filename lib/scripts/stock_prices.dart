@@ -3,16 +3,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 dynamic getStockPrices(String stock) async {
-  var url = Uri.https(
-      "query1.finance.yahoo.com",
-      "v11/finance/quoteSummary/$stock.SA",
-      {"lang": "pt-br", "modules": "price,assetProfile"});
+  var url = Uri.parse(
+      "https://us-central1-capital-17afa.cloudfunctions.net/getPrices/$stock");
   Map<String, String> headers = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Credentials": "true",
     "Access-Control-Allow-Headers":
         "Origin,Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,locale",
-    "Access-Control-Allow-Methods": "POST, OPTIONS"
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS"
   };
   var response = await http.get(url, headers: headers);
   if (response.statusCode.toString().startsWith("2")) {

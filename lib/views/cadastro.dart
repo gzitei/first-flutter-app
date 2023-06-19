@@ -41,185 +41,187 @@ class _CadastroViewState extends State<CadastroView> {
         toolbarHeight: 120,
         centerTitle: true,
       ),
-      body: SafeArea(
-        top: true,
-        child: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(
-                border: Border(
-                  top: BorderSide(
-                    color: Colors.white,
-                    width: 2,
+      body: SingleChildScrollView(
+        child: SafeArea(
+          top: true,
+          child: Column(
+            children: [
+              Container(
+                decoration: BoxDecoration(
+                  border: Border(
+                    top: BorderSide(
+                      color: Colors.white,
+                      width: 2,
+                    ),
+                    bottom: BorderSide(
+                      color: Colors.black,
+                      width: 2,
+                    ),
                   ),
-                  bottom: BorderSide(
-                    color: Colors.black,
-                    width: 2,
-                  ),
+                  color: colorRed,
                 ),
-                color: colorRed,
+                height: 18,
               ),
-              height: 18,
-            ),
-            SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
-              child: Center(
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: campoTexto(
-                            "Nome",
-                            name,
-                            Icon(Icons.person),
-                            16,
-                            false,
-                            TextInputType.name,
-                          ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: campoTexto(
-                              "Sobrenome",
-                              surname,
+              SingleChildScrollView(
+                padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: campoTexto(
+                              "Nome",
+                              name,
                               Icon(Icons.person),
                               16,
                               false,
-                              TextInputType.name),
-                        )
-                      ],
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    campoTexto("E-mail", email, Icon(Icons.email), 16, false,
-                        TextInputType.emailAddress),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    campoTexto("Senha", password, Icon(Icons.lock), 16, true,
-                        TextInputType.visiblePassword),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    campoTexto(
-                        "Confirme sua senha",
-                        passwordCheck,
-                        Icon(Icons.lock),
-                        16,
-                        true,
-                        TextInputType.visiblePassword),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    campoTexto(
-                        "CPF",
-                        cpf,
-                        Icon(Icons.contacts),
-                        16,
-                        false,
-                        TextInputType.numberWithOptions(
-                            decimal: true, signed: true)),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    seletorData(
-                      "Data de nascimento",
-                      birth,
-                      Icon(Icons.calendar_month),
-                      16,
-                      context,
-                      (value) {
-                        if (value != null) {
-                          setState(
-                            () {
-                              current_date = value;
-                              birth.text =
-                                  DateFormat.yMd("pt_br").format(value);
-                            },
-                          );
-                        }
-                      },
-                      current_date,
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            icon: Icon(Icons.how_to_reg),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: colorRed,
-                                fixedSize: Size.fromHeight(60)),
-                            onPressed: () {
-                              if (name.text.isEmpty) {
-                                dialog_ok(context, "Campo Obrigatório",
-                                    "Nome é um campo obrigatório!");
-                                return;
-                              }
-                              if (surname.text.isEmpty) {
-                                dialog_ok(context, "Campo Obrigatório",
-                                    "Sobrenome é um campo obrigatório!");
-                                return;
-                              }
-                              if (email.text.isEmpty) {
-                                dialog_ok(context, "Campo Obrigatório",
-                                    "E-mail é um campo obrigatório!");
-                                return;
-                              }
-                              if (password.text.isEmpty) {
-                                dialog_ok(context, "Campo Obrigatório",
-                                    "Senha é um campo obrigatório!");
-                                return;
-                              }
-                              if (passwordCheck.text.isEmpty) {
-                                dialog_ok(context, "Campo Obrigatório",
-                                    "A confirmação da senha é um campo obrigatório!");
-                                return;
-                              }
-                              if (cpf.text.isEmpty) {
-                                dialog_ok(context, "Campo Obrigatório",
-                                    "CPF é um campo obrigatório!");
-                                return;
-                              }
-                              if (birth.text.isEmpty) {
-                                dialog_ok(context, "Campo Obrigatório",
-                                    "Data de nascimento é um campo obrigatório!");
-                                return;
-                              }
-                              if (passwordCheck.text != password.text) {
-                                dialog_ok(context, "Confirmação de Senha",
-                                    "Não foi possível confirmar sua senha!");
-                                return;
-                              }
-                              LoginController().criarConta(
-                                context,
-                                name.text,
-                                surname.text,
-                                email.text,
-                                password.text,
-                                cpf.text,
-                                birth.text,
-                              );
-                            },
-                            label: Text(
-                              "Cadastrar",
-                              style: GoogleFonts.robotoSlab(fontSize: 18),
+                              TextInputType.name,
                             ),
                           ),
-                        ),
-                      ],
-                    )
-                  ],
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: campoTexto(
+                                "Sobrenome",
+                                surname,
+                                Icon(Icons.person),
+                                16,
+                                false,
+                                TextInputType.name),
+                          )
+                        ],
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      campoTexto("E-mail", email, Icon(Icons.email), 16, false,
+                          TextInputType.emailAddress),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      campoTexto("Senha", password, Icon(Icons.lock), 16, true,
+                          TextInputType.visiblePassword),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      campoTexto(
+                          "Confirme sua senha",
+                          passwordCheck,
+                          Icon(Icons.lock),
+                          16,
+                          true,
+                          TextInputType.visiblePassword),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      campoTexto(
+                          "CPF",
+                          cpf,
+                          Icon(Icons.contacts),
+                          16,
+                          false,
+                          TextInputType.numberWithOptions(
+                              decimal: true, signed: true)),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      seletorData(
+                        "Data de nascimento",
+                        birth,
+                        Icon(Icons.calendar_month),
+                        16,
+                        context,
+                        (value) {
+                          if (value != null) {
+                            setState(
+                              () {
+                                current_date = value;
+                                birth.text =
+                                    DateFormat.yMd("pt_br").format(value);
+                              },
+                            );
+                          }
+                        },
+                        current_date,
+                      ),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              icon: Icon(Icons.how_to_reg),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: colorRed,
+                                  fixedSize: Size.fromHeight(60)),
+                              onPressed: () {
+                                if (name.text.isEmpty) {
+                                  dialog_ok(context, "Campo Obrigatório",
+                                      "Nome é um campo obrigatório!");
+                                  return;
+                                }
+                                if (surname.text.isEmpty) {
+                                  dialog_ok(context, "Campo Obrigatório",
+                                      "Sobrenome é um campo obrigatório!");
+                                  return;
+                                }
+                                if (email.text.isEmpty) {
+                                  dialog_ok(context, "Campo Obrigatório",
+                                      "E-mail é um campo obrigatório!");
+                                  return;
+                                }
+                                if (password.text.isEmpty) {
+                                  dialog_ok(context, "Campo Obrigatório",
+                                      "Senha é um campo obrigatório!");
+                                  return;
+                                }
+                                if (passwordCheck.text.isEmpty) {
+                                  dialog_ok(context, "Campo Obrigatório",
+                                      "A confirmação da senha é um campo obrigatório!");
+                                  return;
+                                }
+                                if (cpf.text.isEmpty) {
+                                  dialog_ok(context, "Campo Obrigatório",
+                                      "CPF é um campo obrigatório!");
+                                  return;
+                                }
+                                if (birth.text.isEmpty) {
+                                  dialog_ok(context, "Campo Obrigatório",
+                                      "Data de nascimento é um campo obrigatório!");
+                                  return;
+                                }
+                                if (passwordCheck.text != password.text) {
+                                  dialog_ok(context, "Confirmação de Senha",
+                                      "Não foi possível confirmar sua senha!");
+                                  return;
+                                }
+                                LoginController().criarConta(
+                                  context,
+                                  name.text,
+                                  surname.text,
+                                  email.text,
+                                  password.text,
+                                  cpf.text,
+                                  birth.text,
+                                );
+                              },
+                              label: Text(
+                                "Cadastrar",
+                                style: GoogleFonts.robotoSlab(fontSize: 18),
+                              ),
+                            ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

@@ -42,7 +42,6 @@ class TransactionController {
       var id = element.id;
       var data = element.data() as Map<String, dynamic>;
       data["id"] = id;
-      print(id);
       list.add(data);
     });
     if (list.length > 0) {
@@ -61,7 +60,6 @@ class TransactionController {
 
   Future<void> set(StockTransaction st) async {
     try {
-      print(st.id);
       await FirebaseFirestore.instance
           .collection("transacoes")
           .doc(st.id)

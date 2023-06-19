@@ -46,96 +46,98 @@ class _AccountViewState extends State<AccountView> {
         toolbarHeight: 120,
         centerTitle: true,
       ),
-      body: Container(
-          width: 400,
-          padding: EdgeInsets.all(20),
-          child: FutureBuilder(
-            future: getUser(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                user = snapshot.data! as Map<String, dynamic>;
-                nome.text = user["nome"];
-                sobrenome.text = user["sobrenome"];
-                uid = user["uid"];
-                return Column(
-                  children: [
-                    campoTexto("Nome", nome, Icon(Icons.person), 16, false,
-                        TextInputType.name),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    campoTexto("Sobrenome", sobrenome, Icon(Icons.person), 16,
-                        false, TextInputType.name),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            icon: Icon(Icons.how_to_reg),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: colorRed,
-                                fixedSize: Size.fromHeight(60)),
-                            onPressed: () {
-                              print(uid);
-                              if (nome.text.isDefinedAndNotNull &&
-                                  sobrenome.text.isDefinedAndNotNull) {
-                                user["nome"] = nome.text;
-                                user["sobrenome"] = sobrenome.text;
+      body: Center(
+        child: Container(
+            width: 400,
+            padding: EdgeInsets.all(20),
+            child: FutureBuilder(
+              future: getUser(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  user = snapshot.data! as Map<String, dynamic>;
+                  nome.text = user["nome"];
+                  sobrenome.text = user["sobrenome"];
+                  uid = user["uid"];
+                  return Column(
+                    children: [
+                      campoTexto("Nome", nome, Icon(Icons.person), 16, false,
+                          TextInputType.name),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      campoTexto("Sobrenome", sobrenome, Icon(Icons.person), 16,
+                          false, TextInputType.name),
+                      SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              icon: Icon(Icons.how_to_reg),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: colorRed,
+                                  fixedSize: Size.fromHeight(60)),
+                              onPressed: () {
+                                print(uid);
+                                if (nome.text.isDefinedAndNotNull &&
+                                    sobrenome.text.isDefinedAndNotNull) {
+                                  user["nome"] = nome.text;
+                                  user["sobrenome"] = sobrenome.text;
+                                  try {
+                                    LoginController().editarUsuario(uid, user);
+                                    showPositiveFeedback("Usuário atualizado!");
+                                    setState(() {});
+                                  } catch (e) {
+                                    showNegativeFeedback("Erro ao atualizar!");
+                                  }
+                                } else {
+                                  showNegativeFeedback(
+                                      "Nome e Sobrenome são obrigatórios.");
+                                }
+                              },
+                              label: Text(
+                                "Atualizar Usuário",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.robotoSlab(fontSize: 18),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Expanded(
+                            child: ElevatedButton.icon(
+                              icon: Icon(Icons.lock),
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: colorRed,
+                                  fixedSize: Size.fromHeight(60)),
+                              onPressed: () {
                                 try {
-                                  LoginController().editarUsuario(uid, user);
-                                  showPositiveFeedback("Usuário atualizado!");
-                                  setState(() {});
+                                  LoginController()
+                                      .esqueceuSenha(context, user["email"]);
                                 } catch (e) {
                                   showNegativeFeedback("Erro ao atualizar!");
                                 }
-                              } else {
-                                showNegativeFeedback(
-                                    "Nome e Sobrenome são obrigatórios.");
-                              }
-                            },
-                            label: Text(
-                              "Atualizar Usuário",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.robotoSlab(fontSize: 18),
+                              },
+                              label: Text(
+                                "Atualizar Senha",
+                                style: GoogleFonts.robotoSlab(fontSize: 18),
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
-                        ),
-                        SizedBox(
-                          width: 10,
-                        ),
-                        Expanded(
-                          child: ElevatedButton.icon(
-                            icon: Icon(Icons.lock),
-                            style: ElevatedButton.styleFrom(
-                                backgroundColor: colorRed,
-                                fixedSize: Size.fromHeight(60)),
-                            onPressed: () {
-                              try {
-                                LoginController()
-                                    .esqueceuSenha(context, user["email"]);
-                              } catch (e) {
-                                showNegativeFeedback("Erro ao atualizar!");
-                              }
-                            },
-                            label: Text(
-                              "Atualizar Senha",
-                              style: GoogleFonts.robotoSlab(fontSize: 18),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                        ),
-                      ],
-                    )
-                  ],
+                        ],
+                      )
+                    ],
+                  );
+                }
+                return Center(
+                  child: CircularProgressIndicator(),
                 );
-              }
-              return Center(
-                child: CircularProgressIndicator(),
-              );
-            },
-          )),
+              },
+            )),
+      ),
     );
   }
 

@@ -11,7 +11,7 @@ import 'package:capital_especulativo_app/class/wallet.dart';
 import 'package:capital_especulativo_app/controller/login_controller.dart';
 import 'package:capital_especulativo_app/controller/transaction_controller.dart';
 import 'package:capital_especulativo_app/controller/wallet_controller.dart';
-import 'package:capital_especulativo_app/views/widget_wallet.dart';
+import 'package:capital_especulativo_app/views/show_wallets.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -31,12 +31,14 @@ TextEditingController transactionCarteiraName = TextEditingController();
 var current_date;
 var now = DateTime.now();
 late var carteira, uid, usuario, nome, email, _future_carteira, transactions;
-var visibility = [];
+var visibility = [false];
 var _wallets = [];
 var stocks = [];
 var stock_info = {};
 var summary;
 var autor = AssetImage("lib/images/marx.png");
+var i = -1;
+String selected = "";
 Future<dynamic> getWallet() async {
   uid = await FirebaseAuth.instance.currentUser!.uid;
   var _carteira = await WalletController().get(uid);
@@ -226,286 +228,454 @@ class _PrincipalViewState extends State<PrincipalView>
       ),
       body: TabBarView(
         children: [
-          Container(
-            height: 600,
-            padding: EdgeInsets.all(30),
-            child: Column(
-              children: [
-                SizedBox(
-                  width: 600,
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: ElevatedButton.icon(
-                          icon: Icon(Icons.add),
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor: colorRed,
-                              fixedSize: Size.fromHeight(40)),
-                          onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  var wallet_name = TextEditingController();
-                                  return AlertDialog(
-                                    insetPadding: EdgeInsets.all(10),
-                                    title: Text("Nome da Carteira"),
-                                    content: Container(
-                                      width: 300,
-                                      padding: EdgeInsets.all(10),
-                                      child: campoTexto(
-                                        "Nome da Carteira",
-                                        wallet_name,
-                                        Icon(Icons.account_balance_wallet),
-                                        16,
-                                        false,
-                                        TextInputType.name,
-                                      ),
-                                    ),
-                                    actions: [
-                                      TextButton(
-                                        child: const Text(
-                                          "Cancelar",
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                        onPressed: () =>
-                                            {Navigator.pop(context)},
-                                      ),
-                                      TextButton(
-                                        child: const Text(
-                                          "Criar",
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                        onPressed: () {
-                                          if (wallet_name.text.isNotEmpty) {
-                                            Navigator.pop(context);
-                                            var agora = DateTime.now();
-                                            var created_at =
-                                                DateFormat.yMd("pt_BR")
-                                                    .format(agora);
-                                            var creation =
-                                                agora.millisecondsSinceEpoch;
-                                            var transactions = [];
-                                            var id = null;
-                                            var nome = wallet_name.text;
-                                            Wallet(uid, created_at, creation,
-                                                transactions, id, nome);
-                                            try {
-                                              WalletController().add(nome, uid);
-                                              showPositiveFeedback(
-                                                  "Carteira criada!");
-                                            } catch (e) {
-                                              showNegativeFeedback(
-                                                  "Erro ao criar carteira!");
-                                            }
-                                            setState(() {
-                                              _future_carteira = getWallet();
-                                            });
-                                          }
-                                        },
-                                      )
-                                    ],
-                                  );
-                                });
-                          },
-                          label: Text(
-                            "Nova Carteira",
-                            style: GoogleFonts.robotoSlab(fontSize: 18),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Expanded(
-                  child: FutureBuilder(
-                    future: _future_carteira,
-                    builder: (context, snapshot) {
-                      if (snapshot.hasData) {
-                        carteira = snapshot.data!;
-                        if (carteira["ok"]) {
-                          _wallets = [];
-                          carteira["wallets"].forEach((element) {
-                            var element_id = element.id;
-                            var elementJson =
-                                element.data() as Map<String, dynamic>;
-                            elementJson["id"] = element_id;
-                            _wallets.add(Wallet.fromJson(elementJson));
-                          });
-                          if (_wallets.length > visibility.length) {
-                            for (var i = visibility.length;
-                                i < _wallets.length;
-                                i++) {
-                              visibility.add(false);
-                            }
-                          }
-                          if (true) {
-                            return SizedBox(
-                              width: 600,
-                              child: ListView.builder(
-                                itemCount: _wallets.length,
-                                itemBuilder: (context, index) {
-                                  var current_wallet =
-                                      _wallets[index] as Wallet;
-                                  return Column(
-                                    children: [
-                                      Card(
-                                        shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(5.0),
-                                        ),
-                                        margin:
-                                            EdgeInsets.symmetric(vertical: 5),
-                                        child: Container(
-                                          height: 60,
-                                          decoration: BoxDecoration(
-                                            color: colorBlue,
-                                            borderRadius:
-                                                BorderRadius.circular(5.0),
-                                            // gradient: LinearGradient(
-                                            //     colors: [
-                                            //       Colors.green,
-                                            //       colorBlue
-                                            //     ],
-                                            //     begin: Alignment.bottomRight,
-                                            //     end: Alignment.topCenter),
-                                          ),
-                                          child: Center(
-                                            child: ListTile(
-                                              onTap: () {
-                                                setState(() {
-                                                  var atual = visibility[index];
-                                                  for (var i = 0;
-                                                      i < visibility.length;
-                                                      i++) {
-                                                    visibility[i] = false;
-                                                  }
-                                                  if (!atual) {
-                                                    visibility[index] = true;
-                                                  }
-                                                });
-                                              },
-                                              title: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      _wallets[index].nome,
-                                                      style: TextStyle(
-                                                          color: Colors.white),
-                                                    ),
-                                                    // Text(
-                                                    //   "45%",
-                                                    //   style: TextStyle(
-                                                    //       color: Colors.white),
-                                                    // ),
-                                                  ]),
-                                              leading: Icon(
-                                                Icons.monetization_on_outlined,
-                                                color: Colors.white,
-                                              ),
-                                              trailing: GestureDetector(
-                                                child: Icon(
-                                                  Icons.delete,
-                                                  color: Colors.white,
-                                                ),
-                                                onTap: () {
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return AlertDialog(
-                                                            title: Text(
-                                                                "Deseja deletar?"),
-                                                            content: Text(
-                                                                "Não será possível desfazer sua ação."),
-                                                            actions: [
-                                                              TextButton(
-                                                                child:
-                                                                    const Text(
-                                                                  "Cancelar",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          16),
-                                                                ),
-                                                                onPressed: () =>
-                                                                    {
-                                                                  Navigator.pop(
-                                                                      context)
-                                                                },
-                                                              ),
-                                                              TextButton(
-                                                                child:
-                                                                    const Text(
-                                                                  "Confirmar",
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          16),
-                                                                ),
-                                                                onPressed: () {
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                  setState(() {
-                                                                    var _deleteWallet =
-                                                                        _wallets[
-                                                                            index];
-                                                                    visibility
-                                                                        .removeAt(
-                                                                            index);
-                                                                    try {
-                                                                      WalletController().delete(
-                                                                          _deleteWallet,
-                                                                          context);
-                                                                      showPositiveFeedback(
-                                                                        "Carteira deletada!",
-                                                                      );
-                                                                    } catch (e) {
-                                                                      showNegativeFeedback(
-                                                                          "Erro ao deletar carteira.");
-                                                                    }
-                                                                    _future_carteira =
-                                                                        WalletController()
-                                                                            .get(uid);
-                                                                  });
-                                                                },
-                                                              )
-                                                            ]);
-                                                      });
-                                                },
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      visibility[index] == false
-                                          ? Container()
-                                          : listWallet(_wallets[index].id)
-                                    ],
-                                  );
-                                },
-                              ),
-                            );
-                          }
-                        } else {
-                          return Container(
-                            padding: EdgeInsets.all(20),
-                            child: Center(
-                              child: Text("Crie uma carteira para começar!",
-                                  style: GoogleFonts.robotoSlab(fontSize: 18)),
+          FutureBuilder(
+            future: getWallet(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                var data = snapshot.data! as Map<String, dynamic>;
+                if (data["ok"]) {
+                  List<Wallet> wallets = [];
+                  data["wallets"].forEach((e) {
+                    var wallet = e.data() as Map<String, dynamic>;
+                    wallet["id"] = e.id;
+                    print(wallet);
+                    wallets.add(Wallet.fromJson(wallet));
+                  });
+                  wallets.sort(
+                    (a, b) => a.creation.toInt() - b.creation.toInt(),
+                  );
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    padding: EdgeInsets.all(10),
+                    itemCount: wallets.length + 1,
+                    itemBuilder: (context, index) {
+                      if (index == 0) {
+                        return Card(
+                          margin: EdgeInsets.symmetric(vertical: 5),
+                          child: ElevatedButton.icon(
+                            label: Text(
+                              "Nova Carteira",
+                              style: GoogleFonts.robotoSlab(fontSize: 18),
                             ),
-                          );
-                        }
+                            icon: Icon(Icons.add),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: colorRed,
+                                fixedSize: Size.fromHeight(40)),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    var wallet_name = TextEditingController();
+                                    return AlertDialog(
+                                      insetPadding: EdgeInsets.all(10),
+                                      title: Text("Nome da Carteira"),
+                                      content: Container(
+                                        width: 300,
+                                        padding: EdgeInsets.all(10),
+                                        child: campoTexto(
+                                          "Nome da Carteira",
+                                          wallet_name,
+                                          Icon(Icons.account_balance_wallet),
+                                          16,
+                                          false,
+                                          TextInputType.name,
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text(
+                                            "Cancelar",
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                          onPressed: () =>
+                                              {Navigator.pop(context)},
+                                        ),
+                                        TextButton(
+                                          child: const Text(
+                                            "Criar",
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                          onPressed: () {
+                                            if (wallet_name.text.isNotEmpty) {
+                                              Navigator.pop(context);
+                                              var agora = DateTime.now();
+                                              var created_at =
+                                                  DateFormat.yMd("pt_BR")
+                                                      .format(agora);
+                                              var creation =
+                                                  agora.millisecondsSinceEpoch;
+                                              var transactions = [];
+                                              var id = null;
+                                              var nome = wallet_name.text;
+                                              Wallet(uid, created_at, creation,
+                                                  transactions, id, nome);
+                                              try {
+                                                WalletController()
+                                                    .add(nome, uid);
+                                                setState(() {
+                                                  getWallet();
+                                                });
+                                                showPositiveFeedback(
+                                                    "Carteira criada!");
+                                              } catch (e) {
+                                                showNegativeFeedback(
+                                                    "Erro ao criar carteira!");
+                                              }
+                                            }
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  });
+                            },
+                          ),
+                        );
+                      } else {
+                        return Column(
+                          children: [
+                            Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              margin: EdgeInsets.symmetric(
+                                vertical: 5,
+                              ),
+                              child: Container(
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  color: colorBlue,
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
+                                child: Center(
+                                  child: ListTile(
+                                    onTap: () {
+                                      print(index);
+                                      setState(() {
+                                        i != index ? i = index : i = -1;
+                                      });
+                                    },
+                                    title: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            wallets[index - 1].nome,
+                                            style:
+                                                TextStyle(color: Colors.white),
+                                          ),
+                                        ]),
+                                    leading: Icon(
+                                      Icons.monetization_on_outlined,
+                                      color: Colors.white,
+                                    ),
+                                    trailing: GestureDetector(
+                                      child: Icon(
+                                        Icons.delete,
+                                        color: Colors.white,
+                                      ),
+                                      onTap: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return AlertDialog(
+                                              title: Text("Deseja deletar?"),
+                                              content: Text(
+                                                  "Não será possível desfazer sua ação."),
+                                              actions: [
+                                                TextButton(
+                                                  child: const Text(
+                                                    "Cancelar",
+                                                    style:
+                                                        TextStyle(fontSize: 16),
+                                                  ),
+                                                  onPressed: () =>
+                                                      {Navigator.pop(context)},
+                                                ),
+                                                TextButton(
+                                                  child: const Text(
+                                                    "Confirmar",
+                                                    style:
+                                                        TextStyle(fontSize: 16),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                    setState(
+                                                      () {
+                                                        var _deleteWallet =
+                                                            wallets[index - 1];
+                                                        wallets.removeAt(
+                                                            index - 1);
+                                                        try {
+                                                          WalletController()
+                                                              .delete(
+                                                                  _deleteWallet,
+                                                                  context);
+                                                          showPositiveFeedback(
+                                                            "Carteira deletada!",
+                                                          );
+                                                          getWallet();
+                                                        } catch (e) {
+                                                          showNegativeFeedback(
+                                                              "Erro ao deletar carteira.");
+                                                        }
+                                                      },
+                                                    );
+                                                  },
+                                                )
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            i != index
+                                ? Container()
+                                : FutureBuilder(
+                                    future:
+                                        process_stocks(wallets[index - 1].id),
+                                    builder: (context, snapshot) {
+                                      return FutureBuilder(
+                                        future: process_stocks(
+                                            wallets[index - 1].id),
+                                        builder: (context, snapshot) {
+                                          var screenSize =
+                                              MediaQuery.of(context).size.width;
+                                          print(screenSize);
+                                          if (snapshot.hasData) {
+                                            Map<String, dynamic> snapshotdata =
+                                                json.decode(json
+                                                    .encode(snapshot.data!));
+                                            if (snapshotdata.entries.isEmpty) {
+                                              i = -1;
+                                              return Container();
+                                            }
+                                            List<String> keys =
+                                                List.from(snapshotdata.keys);
+                                            return ListView.builder(
+                                              shrinkWrap: true,
+                                              physics: ClampingScrollPhysics(),
+                                              padding: EdgeInsets.all(3),
+                                              itemCount: keys.length,
+                                              itemBuilder: (context, pos) {
+                                                var this_stock = keys[pos];
+                                                var stock_price =
+                                                    get_price(this_stock);
+                                                var stock_info =
+                                                    snapshotdata[this_stock]
+                                                        as Map<String, dynamic>;
+                                                List<Widget> children = [
+                                                  Column(
+                                                    children: [
+                                                      Text(
+                                                        this_stock,
+                                                        style: TextStyle(
+                                                          fontSize: 16,
+                                                        ),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 5,
+                                                      ),
+                                                      FutureBuilder(
+                                                        future: stock_price,
+                                                        builder:
+                                                            (context, price) {
+                                                          if (price.hasData) {
+                                                            var cotacao = price
+                                                                    .data!
+                                                                as Map<String,
+                                                                    dynamic>;
+                                                            return Text(
+                                                                cotacao["nome"],
+                                                                textAlign:
+                                                                    TextAlign
+                                                                        .center,
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 12,
+                                                                ));
+                                                          }
+                                                          return CircularProgressIndicator();
+                                                        },
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ];
+                                                if (screenSize > 450) {
+                                                  children.add(
+                                                    Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        FutureBuilder(
+                                                          future: stock_price,
+                                                          builder:
+                                                              (context, price) {
+                                                            if (price.hasData) {
+                                                              var cotacao = price
+                                                                      .data!
+                                                                  as Map<String,
+                                                                      dynamic>;
+                                                              return Text(
+                                                                "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(cotacao["preco"])}",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16),
+                                                              );
+                                                            }
+                                                            return CircularProgressIndicator();
+                                                          },
+                                                        ),
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        Text(
+                                                          "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"])}",
+                                                          style: TextStyle(
+                                                              fontSize: 12),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  );
+                                                  if (screenSize > 600) {
+                                                    children.add(Column(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        FutureBuilder(
+                                                          future: stock_price,
+                                                          builder:
+                                                              (context, price) {
+                                                            if (price.hasData) {
+                                                              var cotacao = price
+                                                                      .data!
+                                                                  as Map<String,
+                                                                      dynamic>;
+                                                              return Text(
+                                                                "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(cotacao["preco"] * stock_info["qtt"])}",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        16),
+                                                              );
+                                                            }
+                                                            return CircularProgressIndicator();
+                                                          },
+                                                        ),
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        Text(
+                                                          "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"] * stock_info["qtt"])}",
+                                                          style: TextStyle(
+                                                              fontSize: 12),
+                                                        ),
+                                                      ],
+                                                    ));
+                                                  }
+                                                }
+                                                return Card(
+                                                  elevation: 2,
+                                                  shadowColor: Colors.black,
+                                                  borderOnForeground: true,
+                                                  margin: EdgeInsets.symmetric(
+                                                    vertical: 5,
+                                                  ),
+                                                  child: ListTile(
+                                                    leading: FutureBuilder(
+                                                      future: stock_price,
+                                                      builder:
+                                                          (context, price) {
+                                                        if (price.hasData) {
+                                                          var cotacao =
+                                                              price.data!
+                                                                  as Map<String,
+                                                                      dynamic>;
+                                                          return cotacao[
+                                                                      "preco"] >=
+                                                                  stock_info[
+                                                                      "media"]
+                                                              ? Icon(
+                                                                  Icons
+                                                                      .arrow_circle_up,
+                                                                  color: Colors
+                                                                      .green,
+                                                                )
+                                                              : Icon(
+                                                                  Icons
+                                                                      .arrow_circle_down,
+                                                                  color: Colors
+                                                                      .red,
+                                                                );
+                                                        }
+                                                        return CircularProgressIndicator();
+                                                      },
+                                                    ),
+                                                    contentPadding:
+                                                        EdgeInsets.all(8),
+                                                    title: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceEvenly,
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .center,
+                                                        children: children),
+                                                    trailing: FutureBuilder(
+                                                      future: stock_price,
+                                                      builder:
+                                                          (context, price) {
+                                                        if (price.hasData) {
+                                                          var cotacao =
+                                                              price.data!
+                                                                  as Map<String,
+                                                                      dynamic>;
+                                                          var variacao = ((cotacao[
+                                                                          "preco"] /
+                                                                      stock_info[
+                                                                          "media"]) -
+                                                                  1) *
+                                                              100;
+                                                          return Text(
+                                                            "${NumberFormat("0.00", "pt_BR").format(variacao)}%",
+                                                            style: TextStyle(
+                                                              color: variacao >
+                                                                      0
+                                                                  ? Colors.green
+                                                                  : Colors.red,
+                                                            ),
+                                                          );
+                                                        }
+                                                        return CircularProgressIndicator();
+                                                      },
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                            );
+                                          }
+                                          return Center(
+                                            child: CircularProgressIndicator(),
+                                          );
+                                        },
+                                      );
+                                    },
+                                  )
+                          ],
+                        );
                       }
-                      return Center(
-                        child: CircularProgressIndicator(),
-                      );
                     },
-                  ),
-                ),
-              ],
-            ),
+                  );
+                }
+              } else {
+                return Container();
+              }
+              return CircularProgressIndicator();
+            },
           ),
           FutureBuilder(
             future: _future_carteira,
@@ -778,6 +948,93 @@ class _PrincipalViewState extends State<PrincipalView>
               return CircularProgressIndicator();
             },
           ),
+          // FutureBuilder(
+          //   future: getWallet(),
+          //   builder: (context, snapshot) {
+          //     if (snapshot.hasData) {
+          //       var data = snapshot.data! as Map<String, dynamic>;
+          //       if (data["ok"]) {
+          //         List<DropdownMenuEntry> carteira_options = [];
+          //         List<Wallet> wallets = [];
+          //         data["wallets"].forEach((e) {
+          //           var wallet = e.data() as Map<String, dynamic>;
+          //           wallet["id"] = e.id;
+          //           wallets.add(Wallet.fromJson(wallet));
+          //         });
+          //         wallets.sort(
+          //           (a, b) => a.creation.toInt() - b.creation.toInt(),
+          //         );
+          //         wallets.forEach(
+          //           (wallet) {
+          //             carteira_options.add(
+          //               DropdownMenuEntry(
+          //                 label: wallet.nome,
+          //                 value: json
+          //                     .encode({"id": wallet.id, "name": wallet.nome}),
+          //                 enabled: true,
+          //               ),
+          //             );
+          //           },
+          //         );
+          //         return Container(
+          //           padding: EdgeInsets.all(20),
+          //           child: SingleChildScrollView(
+          //             child: Column(
+          //               crossAxisAlignment: CrossAxisAlignment.center,
+          //               mainAxisAlignment: MainAxisAlignment.start,
+          //               children: [
+          //                 DropdownMenu(
+          //                   width: 350,
+          //                   label: Text("Carteira"),
+          //                   dropdownMenuEntries: carteira_options,
+          //                   onSelected: (value) {
+          //                     setState(() {
+          //                       selected = json.decode(value)["id"];
+          //                     });
+          //                   },
+          //                 ),
+          //                 SizedBox(
+          //                   height: 20,
+          //                 ),
+          //                 selected.isEmpty
+          //                     ? Container()
+          //                     : FutureBuilder(
+          //                         future: process_stocks(selected),
+          //                         builder: (context, snaptshot) {
+          //                           if (snapshot.hasData) {
+          //                             return Placeholder();
+          //                           }
+          //                           return CircularProgressIndicator();
+          //                         },
+          //                       ),
+          //                 SizedBox(
+          //                   height: 20,
+          //                 ),
+          //                 selected.isEmpty
+          //                     ? Container()
+          //                     : FutureBuilder(
+          //                         future: process_stocks(selected),
+          //                         builder: (context, snaptshot) {
+          //                           if (snapshot.hasData) {
+          //                             return Placeholder();
+          //                           }
+          //                           return CircularProgressIndicator();
+          //                         },
+          //                       ),
+          //               ],
+          //             ),
+          //           ),
+          //         );
+          //       } else {
+          //         return Center(
+          //           child: Text("Crie uma carteira para começar!",
+          //               style: GoogleFonts.robotoSlab(fontSize: 18)),
+          //         );
+          //       }
+          //     }
+          //     return CircularProgressIndicator();
+          //   },
+          // ),
         ],
         controller: _tabController,
       ),

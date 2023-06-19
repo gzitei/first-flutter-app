@@ -55,10 +55,12 @@ class _LoginViewState extends State<LoginView> {
                           shape: BoxShape.circle,
                           color: colorRed,
                           border: Border.all(color: Colors.black)),
-                      child: Icon(
-                        Icons.savings,
-                        size: (screen(context).height * .25) - 40,
-                        color: Colors.white,
+                      child: Center(
+                        child: Icon(
+                          Icons.savings,
+                          size: (screen(context).height * .25) - 40,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     SizedBox(
