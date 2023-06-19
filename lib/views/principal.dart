@@ -12,6 +12,7 @@ import 'package:capital_especulativo_app/controller/login_controller.dart';
 import 'package:capital_especulativo_app/controller/transaction_controller.dart';
 import 'package:capital_especulativo_app/controller/wallet_controller.dart';
 import 'package:capital_especulativo_app/views/show_wallets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -746,9 +747,176 @@ class _PrincipalViewState extends State<PrincipalView>
                       }
                     },
                   );
+                } else {
+                  return ListView.builder(
+                      itemCount: 1,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          margin: EdgeInsets.symmetric(vertical: 5),
+                          child: ElevatedButton.icon(
+                            label: Text(
+                              "Nova Carteira",
+                              style: GoogleFonts.robotoSlab(fontSize: 18),
+                            ),
+                            icon: Icon(Icons.add),
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: colorRed,
+                                fixedSize: Size.fromHeight(40)),
+                            onPressed: () {
+                              showDialog(
+                                  context: context,
+                                  builder: (context) {
+                                    var wallet_name = TextEditingController();
+                                    return AlertDialog(
+                                      insetPadding: EdgeInsets.all(10),
+                                      title: Text("Nome da Carteira"),
+                                      content: Container(
+                                        width: 300,
+                                        padding: EdgeInsets.all(10),
+                                        child: campoTexto(
+                                          "Nome da Carteira",
+                                          wallet_name,
+                                          Icon(Icons.account_balance_wallet),
+                                          16,
+                                          false,
+                                          TextInputType.name,
+                                        ),
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          child: const Text(
+                                            "Cancelar",
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                          onPressed: () =>
+                                              {Navigator.pop(context)},
+                                        ),
+                                        TextButton(
+                                          child: const Text(
+                                            "Criar",
+                                            style: TextStyle(fontSize: 16),
+                                          ),
+                                          onPressed: () {
+                                            if (wallet_name.text.isNotEmpty) {
+                                              Navigator.pop(context);
+                                              var agora = DateTime.now();
+                                              var created_at =
+                                                  DateFormat.yMd("pt_BR")
+                                                      .format(agora);
+                                              var creation =
+                                                  agora.millisecondsSinceEpoch;
+                                              var transactions = [];
+                                              var id = null;
+                                              var nome = wallet_name.text;
+                                              Wallet(uid, created_at, creation,
+                                                  transactions, id, nome);
+                                              try {
+                                                WalletController()
+                                                    .add(nome, uid);
+                                                setState(() {
+                                                  getWallet();
+                                                });
+                                                showPositiveFeedback(
+                                                    "Carteira criada!");
+                                              } catch (e) {
+                                                showNegativeFeedback(
+                                                    "Erro ao criar carteira!");
+                                              }
+                                            }
+                                          },
+                                        )
+                                      ],
+                                    );
+                                  });
+                            },
+                          ),
+                        );
+                      });
                 }
               } else {
-                return Container();
+                return ListView.builder(
+                  itemCount: 1,
+                  itemBuilder: (context, index) {
+                    return Card(
+                      margin: EdgeInsets.symmetric(vertical: 5),
+                      child: ElevatedButton.icon(
+                        label: Text(
+                          "Nova Carteira",
+                          style: GoogleFonts.robotoSlab(fontSize: 18),
+                        ),
+                        icon: Icon(Icons.add),
+                        style: ElevatedButton.styleFrom(
+                            backgroundColor: colorRed,
+                            fixedSize: Size.fromHeight(40)),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                var wallet_name = TextEditingController();
+                                return AlertDialog(
+                                  insetPadding: EdgeInsets.all(10),
+                                  title: Text("Nome da Carteira"),
+                                  content: Container(
+                                    width: 300,
+                                    padding: EdgeInsets.all(10),
+                                    child: campoTexto(
+                                      "Nome da Carteira",
+                                      wallet_name,
+                                      Icon(Icons.account_balance_wallet),
+                                      16,
+                                      false,
+                                      TextInputType.name,
+                                    ),
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text(
+                                        "Cancelar",
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      onPressed: () => {Navigator.pop(context)},
+                                    ),
+                                    TextButton(
+                                      child: const Text(
+                                        "Criar",
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      onPressed: () {
+                                        if (wallet_name.text.isNotEmpty) {
+                                          Navigator.pop(context);
+                                          var agora = DateTime.now();
+                                          var created_at =
+                                              DateFormat.yMd("pt_BR")
+                                                  .format(agora);
+                                          var creation =
+                                              agora.millisecondsSinceEpoch;
+                                          var transactions = [];
+                                          var id = null;
+                                          var nome = wallet_name.text;
+                                          Wallet(uid, created_at, creation,
+                                              transactions, id, nome);
+                                          try {
+                                            WalletController().add(nome, uid);
+                                            setState(() {
+                                              getWallet();
+                                            });
+                                            showPositiveFeedback(
+                                                "Carteira criada!");
+                                          } catch (e) {
+                                            showNegativeFeedback(
+                                                "Erro ao criar carteira!");
+                                          }
+                                        }
+                                      },
+                                    )
+                                  ],
+                                );
+                              });
+                        },
+                      ),
+                    );
+                  },
+                );
               }
               return CircularProgressIndicator();
             },
