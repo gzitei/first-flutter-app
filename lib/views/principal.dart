@@ -438,6 +438,7 @@ class _PrincipalViewState extends State<PrincipalView>
                                     future:
                                         process_stocks(wallets[index - 1].id),
                                     builder: (context, snapshot) {
+                                      var subtitle = null;
                                       return FutureBuilder(
                                         future: process_stocks(
                                             wallets[index - 1].id),
@@ -468,42 +469,64 @@ class _PrincipalViewState extends State<PrincipalView>
                                                     snapshotdata[this_stock]
                                                         as Map<String, dynamic>;
                                                 List<Widget> children = [
-                                                  Column(
-                                                    children: [
-                                                      Text(
-                                                        this_stock,
-                                                        style: TextStyle(
-                                                          fontSize: 16,
+                                                  Container(
+                                                    width: 150,
+                                                    child: Column(
+                                                      children: [
+                                                        Text(
+                                                          this_stock,
+                                                          style: TextStyle(
+                                                            fontSize: 16,
+                                                          ),
                                                         ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 5,
-                                                      ),
-                                                      FutureBuilder(
-                                                        future: stock_price,
-                                                        builder:
-                                                            (context, price) {
-                                                          if (price.hasData) {
-                                                            var cotacao = price
-                                                                    .data!
-                                                                as Map<String,
-                                                                    dynamic>;
-                                                            return Text(
-                                                                cotacao["nome"],
-                                                                textAlign:
-                                                                    TextAlign
-                                                                        .center,
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 12,
-                                                                ));
-                                                          }
-                                                          return CircularProgressIndicator();
-                                                        },
-                                                      ),
-                                                    ],
+                                                        SizedBox(
+                                                          height: 5,
+                                                        ),
+                                                        FutureBuilder(
+                                                          future: stock_price,
+                                                          builder:
+                                                              (context, price) {
+                                                            if (price.hasData) {
+                                                              var cotacao = price
+                                                                      .data!
+                                                                  as Map<String,
+                                                                      dynamic>;
+                                                              return Text(
+                                                                  cotacao[
+                                                                      "nome"],
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontSize:
+                                                                        12,
+                                                                  ));
+                                                            }
+                                                            return CircularProgressIndicator();
+                                                          },
+                                                        ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ];
+                                                subtitle = FutureBuilder(
+                                                  future: stock_price,
+                                                  builder: (context, price) {
+                                                    if (price.hasData) {
+                                                      var cotacao = price.data!
+                                                          as Map<String,
+                                                              dynamic>;
+                                                      return Text(
+                                                        "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(cotacao["preco"] * stock_info["qtt"])} (${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"] * stock_info["qtt"])})",
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                        ),
+                                                      );
+                                                    }
+                                                    return CircularProgressIndicator();
+                                                  },
+                                                );
                                                 if (screenSize > 450) {
                                                   children.add(
                                                     Column(
@@ -541,42 +564,6 @@ class _PrincipalViewState extends State<PrincipalView>
                                                       ],
                                                     ),
                                                   );
-                                                  if (screenSize > 600) {
-                                                    children.add(Column(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        FutureBuilder(
-                                                          future: stock_price,
-                                                          builder:
-                                                              (context, price) {
-                                                            if (price.hasData) {
-                                                              var cotacao = price
-                                                                      .data!
-                                                                  as Map<String,
-                                                                      dynamic>;
-                                                              return Text(
-                                                                "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(cotacao["preco"] * stock_info["qtt"])}",
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        16),
-                                                              );
-                                                            }
-                                                            return CircularProgressIndicator();
-                                                          },
-                                                        ),
-                                                        SizedBox(
-                                                          height: 5,
-                                                        ),
-                                                        Text(
-                                                          "${NumberFormat.currency(locale: "pt_br", symbol: "R\$", decimalDigits: 2).format(stock_info["media"] * stock_info["qtt"])}",
-                                                          style: TextStyle(
-                                                              fontSize: 12),
-                                                        ),
-                                                      ],
-                                                    ));
-                                                  }
                                                 }
                                                 return Card(
                                                   elevation: 2,
@@ -617,6 +604,7 @@ class _PrincipalViewState extends State<PrincipalView>
                                                     ),
                                                     contentPadding:
                                                         EdgeInsets.all(8),
+                                                    minVerticalPadding: 5,
                                                     title: Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
@@ -625,6 +613,16 @@ class _PrincipalViewState extends State<PrincipalView>
                                                             CrossAxisAlignment
                                                                 .center,
                                                         children: children),
+                                                    subtitle: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              8.0),
+                                                      child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [subtitle]),
+                                                    ),
                                                     trailing: FutureBuilder(
                                                       future: stock_price,
                                                       builder:
