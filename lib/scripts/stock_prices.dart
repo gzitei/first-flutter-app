@@ -18,9 +18,15 @@ dynamic getStockPrices(String stock) async {
     var result = await content["quoteSummary"]["result"][0];
     var stock_result = {
       "ticker": stock,
-      "industry": result["assetProfile"]["industry"],
-      "industryDisp": result["assetProfile"]["industryDisp"],
-      "sector": result["assetProfile"]["sector"],
+      "industry": result.containsKey("assetProfile")
+          ? result["assetProfile"]["industry"]
+          : "-",
+      "industryDisp": result.containsKey("assetProfile")
+          ? result["assetProfile"]["industryDisp"]
+          : "-",
+      "sector": result.containsKey("assetProfile")
+          ? result["assetProfile"]["sector"]
+          : "-",
       "regularMarketChangePercent": result["price"]
           ["regularMarketChangePercent"]["fmt"],
       "regularMarketTime": result["price"]["regularMarketTime"],
